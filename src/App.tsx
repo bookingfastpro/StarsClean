@@ -110,14 +110,26 @@ function MainApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Identifiants par défaut (peuvent être changés ici)
-    if (loginData.username === 'admin' && loginData.password === 'stars-clean-2026') {
-      setIsAdmin(true);
-      localStorage.setItem('isAdmin', 'true');
-    } else {
-      alert('Identifiants incorrects');
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginData)
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setIsAdmin(true);
+        localStorage.setItem('isAdmin', 'true');
+      } else {
+        alert(data.error || 'Identifiants incorrects');
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert('Une erreur est survenue lors de la connexion');
     }
   };
 

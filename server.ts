@@ -3,11 +3,18 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PROPERTIES_FILE = path.join(process.cwd(), "properties.json");
+
+// Admin credentials from environment variables
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "stars-clean-2026";
 
 async function startServer() {
   const app = express();
@@ -16,6 +23,15 @@ async function startServer() {
   app.use(express.json());
 
   // API Routes
+  app.post("/api/login", (req, res) => {
+    const { username, password } = req.body;
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ success: false, error: "Identifiants invalides" });
+    }
+  });
+
   app.get("/api/properties", async (req, res) => {
     try {
       const data = await fs.readFile(PROPERTIES_FILE, "utf-8");
