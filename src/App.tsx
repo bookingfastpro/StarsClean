@@ -52,6 +52,7 @@ const ElegantLogo = ({ isDark = false }) => (
 // --- APPLICATION PRINCIPALE ---
 function MainApp() {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -352,7 +353,7 @@ function MainApp() {
               <div className="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl border border-slate-100"><Bath size={24} className="text-cyan-500 mb-2"/><span className="font-bold text-slate-900">{p.bathrooms} Sdb.</span></div>
             </div>
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm mb-8 flex-grow"><h2 className="text-xl font-bold mb-4 text-slate-900">À propos de ce logement</h2><p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">{p.desc}</p></div>
-            <Button className="w-full py-5" onClick={() => navigate('contact')}>Demander une réservation <ArrowRight className="ml-2" size={20}/></Button>
+            <Button className="w-full py-5" onClick={() => setIsBookingOpen(true)}>Demander une réservation <ArrowRight className="ml-2" size={20}/></Button>
           </div>
         </div>
       </div>
@@ -592,6 +593,29 @@ function MainApp() {
         {route === 'prestations' && renderPrestations()}
       </main>
       {renderFooter()}
+
+      {/* Booking Overlay */}
+      {isBookingOpen && (
+        <div className="fixed inset-0 z-[100] bg-white animate-fade-in flex flex-col">
+          <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200 bg-white">
+            <ElegantLogo />
+            <button 
+              onClick={() => setIsBookingOpen(false)}
+              className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-800"
+              aria-label="Fermer"
+            >
+              <X size={32} />
+            </button>
+          </div>
+          <div className="flex-grow relative">
+            <iframe 
+              src="https://conciergerie-star-s-clean.amenitiz.io/fr/booking/room#DatesGuests-BE" 
+              className="w-full h-full border-none"
+              title="Réservation Amenitiz"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
