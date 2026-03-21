@@ -6,189 +6,10 @@ import {
   Briefcase, Ship, Car, Coffee, Heart, Plane, Calendar, Camera, Sun, Wine, Bell, Umbrella, CheckCircle,
   ChevronLeft, ChevronRight, Star, Quote, TrendingUp, Map, Award, Zap, Lock, LogOut
 } from 'lucide-react';
-import { 
-  onAuthStateChanged, 
-  signInAnonymously, 
-  signInWithPopup, 
-  GoogleAuthProvider,
-  signOut
-} from 'firebase/auth';
-import { 
-  collection, 
-  onSnapshot, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  doc, 
-  getDoc,
-  getDocFromServer,
-  query,
-  where,
-  orderBy
-} from 'firebase/firestore';
-import { auth, db, handleFirestoreError } from './firebase';
-import { Property, Review, Category, OperationType } from './types';
+import { Property, Review, Category } from './types';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
-// --- DONNÉES DE DÉPART (12 BIENS COMMERCIAUX) ---
-const MOCK_DATA: Omit<Property, 'id'>[] = [
-  {
-    title: "Appartement à 7 minutes de Porto Vecchio",
-    category: "studios",
-    location: "Porto-Vecchio",
-    capacity: "3 personnes",
-    bathrooms: 1,
-    pmr: false,
-    beds: 1,
-    desc: "T2 récent, situé à 7 minutes de Porto-Vecchio, 25 min de Bonifacio, proche des plages de Palombaggia et Santa Giulia.\nLogement classé 2 étoiles par l'office du tourisme de Porto-Vecchio.",
-    images: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1502672260266-1c1de2d96674?auto=format&fit=crop&w=1000&q=80"
-    ],
-    features: ["1 place de parking", "Climatisation", "Machine à laver"]
-  },
-  {
-    title: "Appartement à 100m du port de Bonifacio",
-    category: "minivillas",
-    location: "Bonifacio",
-    capacity: "6 personnes",
-    bathrooms: 1,
-    pmr: true,
-    beds: 2,
-    desc: "Situé au troisième étage avec ascenseur dans une résidence privée, calme et sécurisée, à 100 mètres du port de Bonifacio.\nLogement classé 3 étoiles par l'office du tourisme de Bonifacio.",
-    images: [
-      "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80"
-    ],
-    features: ["Ascenseur", "Terrasse privative", "Garage fermé"]
-  },
-  {
-    title: "Mini villa 4 à 6 personnes",
-    category: "minivillas",
-    location: "Corse du Sud",
-    capacity: "4 à 6 personnes",
-    bathrooms: 1,
-    pmr: true,
-    beds: 2,
-    desc: "Venez découvrir cette mini villa entièrement neuve, décorée avec goût. À moins de 2km des plages, proche de toutes commodités.\nLogement classé 4 étoiles par l'office du tourisme de Bonifacio.",
-    images: [
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80"
-    ],
-    features: ["Terrasse privative", "Parking gratuit", "Classé 4 étoiles"]
-  },
-  {
-    title: "Villa neuve avec vue mer & piscine",
-    category: "villas",
-    location: "Pianottoli Caldarello",
-    capacity: "8 personnes",
-    bathrooms: 3,
-    pmr: false,
-    beds: 4,
-    desc: "Découvrez cette superbe villa neuve située à Pianottoli Caldarello, à quelques minutes des plus belles plages.\nVue mer panoramique depuis les espaces de vie. Piscine chauffée (avril à juin et septembre à octobre).",
-    images: [
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80",
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1000&q=80"
-    ],
-    features: ["Piscine chauffée", "Vue mer panoramique", "Service conciergerie"]
-  },
-  {
-    title: "Villa Le Chêne",
-    category: "villas",
-    location: "Corse du Sud",
-    capacity: "4 personnes",
-    bathrooms: 1,
-    pmr: false,
-    beds: 2,
-    desc: "Idéale pour 4 personnes, la villa Le Chêne est parfaite pour accueillir toute votre famille. Elle se compose d'une pièce à vivre lumineuse.\nAccès illimité à la piscine privée.",
-    images: ["https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Piscine privée", "Meublé de tourisme 4*", "Barbecue"]
-  },
-  {
-    title: "Villa La Myrte",
-    category: "villas",
-    location: "Corse du Sud",
-    capacity: "4 personnes",
-    bathrooms: 1,
-    pmr: false,
-    beds: 2,
-    desc: "Conçu pour accueillir jusqu'à 4 personnes, le gîte La Myrte est un lieu chaleureux et fonctionnel.\nAccès illimité à la piscine privée.",
-    images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Piscine privée", "Meublé de tourisme 4*", "Linge inclus"]
-  },
-  {
-    title: "Villa L'Olivier",
-    category: "minivillas",
-    location: "Corse du Sud",
-    capacity: "4 personnes",
-    bathrooms: 1,
-    pmr: false,
-    beds: 2,
-    desc: "Parfait pour accueillir jusqu'à 4 personnes, le gîte L'Olivier est idéal pour un séjour en famille ou pour deux couples.\nAccès illimité à la piscine partagée.",
-    images: ["https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Piscine partagée", "Double terrasse", "Meublé de tourisme 4*"]
-  },
-  {
-    title: "Villa L'Arbousier",
-    category: "minivillas",
-    location: "Corse du Sud",
-    capacity: "4 personnes",
-    bathrooms: 1,
-    pmr: false,
-    beds: 2,
-    desc: "Pensé pour accueillir jusqu'à 4 personnes, le gîte L'Arbousier est une adresse idéale pour des vacances reposantes à plusieurs.\nAccès illimité à la piscine partagée.",
-    images: ["https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Piscine partagée", "Meublé de tourisme 4*"]
-  },
-  {
-    title: "Superbe Mini villa 4 à 6 personnes",
-    category: "minivillas",
-    location: "Corse du Sud",
-    capacity: "6 personnes",
-    bathrooms: 1,
-    pmr: true,
-    beds: 2,
-    desc: "Venez passer vos vacances en famille ou entre amis dans cette mini villa entièrement neuve. Terrasse privative aménagée.",
-    images: ["https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Terrasse privative", "Parking gratuit"]
-  },
-  {
-    title: "Superbe appartement 3 chambres",
-    category: "minivillas",
-    location: "Bonifacio (proximité)",
-    capacity: "8 personnes",
-    bathrooms: 2,
-    pmr: false,
-    beds: 3,
-    desc: "Bel appartement comprenant trois chambres et deux salles d'eau, doté d'une cuisine ouverte sur un séjour lumineux.",
-    images: ["https://images.unsplash.com/photo-1502672260266-1c1de2d96674?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Grande terrasse", "Plancha", "Parking gratuit"]
-  },
-  {
-    title: "Appartement T3 à Porto Vecchio",
-    category: "minivillas",
-    location: "Porto-Vecchio",
-    capacity: "6 personnes",
-    bathrooms: 2,
-    pmr: true,
-    beds: 2,
-    desc: "Découvrez cet appartement T3 moderne et spacieux, situé dans une résidence récemment construite à Porto Vecchio.",
-    images: ["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Climatisation", "Parking privé"]
-  },
-  {
-    title: "Appartement 2 chambres Bonifacio",
-    category: "minivillas",
-    location: "Bonifacio",
-    capacity: "2 à 6 personnes",
-    bathrooms: 1,
-    pmr: true,
-    beds: 2,
-    desc: "Joli appartement décoré avec goût, pensé pour vous offrir un séjour agréable et confortable, comme à la maison.\nClassé 3 étoiles.",
-    images: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80"],
-    features: ["Terrasse repas", "Classé 3 étoiles"]
-  }
-];
+// --- DONNÉES DE DÉPART (Gérées via properties.json sur le serveur) ---
 
 // --- AVIS GOOGLE ---
 const GOOGLE_REVIEWS: Review[] = [
@@ -230,8 +51,8 @@ const ElegantLogo = ({ isDark = false }) => (
 
 // --- APPLICATION PRINCIPALE ---
 function MainApp() {
-  const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState('home'); 
@@ -239,15 +60,11 @@ function MainApp() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const isSeeding = React.useRef(false);
 
-  // Utiliser les données réelles si présentes, sinon les données de démo
+  // Utiliser les données réelles
   const displayProperties = useMemo(() => {
-    if (properties.length > 0) return properties;
-    if (loading) return [];
-    // Fallback sur MOCK_DATA si la base est vide
-    return MOCK_DATA.map((p, i) => ({ ...p, id: `demo-${i}` } as Property));
-  }, [properties, loading]);
+    return properties;
+  }, [properties]);
 
   // État du formulaire Admin
   const [adminFormData, setAdminFormData] = useState({
@@ -256,81 +73,33 @@ function MainApp() {
   const [isAdminSubmitting, setIsAdminSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Initialisation Auth
+  // Initialisation Auth (Session locale)
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        // Immediate check for hardcoded admin email
-        if (currentUser.email === "jetservice2a@gmail.com") {
-          setIsAdmin(true);
-        }
-        
-        // Then check Firestore for other admins or roles
-        try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-          if (userDoc.exists() && userDoc.data().role === 'admin') {
-            setIsAdmin(true);
-          }
-        } catch (error) {
-          // If it's a permission error, it just means the user doc doesn't exist or isn't readable
-          // We don't log this as an error to avoid noise
-        }
-      } else {
-        setIsAdmin(false);
-        // Auto sign-in anonymously for public browsing
-        signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err));
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Synchronisation des données (Lecture seule)
-  useEffect(() => {
-    const propsRef = collection(db, 'properties');
-    const unsubscribe = onSnapshot(propsRef, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Property));
-      setProperties(data);
-      setLoading(false);
-    }, (error) => {
-      console.error("Firestore onSnapshot error:", error);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Logique d'initialisation des données (Seeding) - Uniquement pour l'admin
-  useEffect(() => {
-    if (isAdmin && properties.length === 0 && !loading && !isSeeding.current) {
-      isSeeding.current = true;
-      const seedData = async () => {
-        console.log("Admin détecté et base vide, initialisation des données Firestore...");
-        const propsRef = collection(db, 'properties');
-        for (const p of MOCK_DATA) {
-          try {
-            await addDoc(propsRef, p);
-          } catch (error) {
-            console.error("Erreur seeding:", error);
-          }
-        }
-        isSeeding.current = false;
-      };
-      seedData();
+    const savedAdmin = localStorage.getItem('isAdmin');
+    if (savedAdmin === 'true') {
+      setIsAdmin(true);
     }
-  }, [isAdmin, properties.length, loading]);
+  }, []);
 
-  // Connection test
+  // Synchronisation des données (Lecture seule via API locale)
   useEffect(() => {
-    async function testConnection() {
+    const fetchProperties = async () => {
       try {
-        await getDocFromServer(doc(db, 'test', 'connection'));
+        const response = await fetch('/api/properties');
+        if (!response.ok) throw new Error('Failed to fetch properties');
+        const data = await response.json();
+        setProperties(data);
       } catch (error) {
-        if(error instanceof Error && error.message.includes('the client is offline')) {
-          console.error("Please check your Firebase configuration. ");
-        }
+        console.error("Error fetching properties:", error);
+      } finally {
+        setLoading(false);
       }
-    }
-    testConnection();
+    };
+
+    fetchProperties();
+    // On pourrait ajouter un intervalle pour simuler le temps réel si besoin
+    const interval = setInterval(fetchProperties, 30000); // Toutes les 30s
+    return () => clearInterval(interval);
   }, []);
 
   const navigate = (newRoute: string, property: Property | null = null) => {
@@ -341,22 +110,21 @@ function MainApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error("Login failed:", error);
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Identifiants par défaut (peuvent être changés ici)
+    if (loginData.username === 'admin' && loginData.password === 'stars-clean-2026') {
+      setIsAdmin(true);
+      localStorage.setItem('isAdmin', 'true');
+    } else {
+      alert('Identifiants incorrects');
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate('home');
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const handleLogout = () => {
+    setIsAdmin(false);
+    localStorage.removeItem('isAdmin');
+    navigate('home');
   };
 
   // --- COMPOSANTS DE VUE ---
@@ -467,9 +235,6 @@ function MainApp() {
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Nos Biens à la une</h2>
           <p className="text-slate-500 text-lg">Découvrez une sélection de nos plus beaux logements en gestion.</p>
-          {properties.length === 0 && !loading && (
-            <span className="inline-block mt-2 px-3 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-full border border-amber-100 uppercase tracking-widest">Mode Aperçu</span>
-          )}
         </div>
         {loading ? <div className="h-40 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div> :
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">{displayProperties.slice(0, 6).map(p => <PropertyCard key={p.id} property={p} />)}</div>
@@ -523,9 +288,6 @@ function MainApp() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 tracking-tight">Nos Biens en Gestion</h1>
           <p className="text-slate-500">Découvrez notre sélection exclusive ({filtered.length} biens)</p>
-          {properties.length === 0 && !loading && (
-            <span className="inline-block mt-2 px-3 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-full border border-amber-100 uppercase tracking-widest">Mode Aperçu</span>
-          )}
         </div>
         
         <div className="flex flex-wrap justify-center gap-4 mb-12">
@@ -593,7 +355,24 @@ function MainApp() {
             <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6"><Lock size={32} /></div>
             <h1 className="text-2xl font-black text-slate-900 mb-2 uppercase tracking-tighter">Accès Privé</h1>
             <p className="text-slate-500 text-sm mb-8">Veuillez vous identifier pour gérer vos biens</p>
-            <Button className="w-full py-4 mt-6" onClick={handleGoogleLogin}>Se connecter avec Google</Button>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <input 
+                className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" 
+                placeholder="Nom d'utilisateur" 
+                value={loginData.username}
+                onChange={e => setLoginData({...loginData, username: e.target.value})}
+                required 
+              />
+              <input 
+                className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" 
+                type="password"
+                placeholder="Mot de passe" 
+                value={loginData.password}
+                onChange={e => setLoginData({...loginData, password: e.target.value})}
+                required 
+              />
+              <Button className="w-full py-4 mt-4">Se connecter</Button>
+            </form>
           </GlassContainer>
         </div>
       );
@@ -603,7 +382,6 @@ function MainApp() {
       e.preventDefault();
       setIsAdminSubmitting(true);
       const imgArr = adminFormData.images.split('\n').map(s => s.trim()).filter(s => s);
-      const propsRef = collection(db, 'properties');
       
       try {
         const payload = { 
@@ -614,16 +392,27 @@ function MainApp() {
           features: []
         };
 
-        if (editingId) {
-          await updateDoc(doc(db, 'properties', editingId), payload);
-          setEditingId(null);
-        } else {
-          await addDoc(propsRef, payload);
-        }
+        const url = editingId ? `/api/properties/${editingId}` : '/api/properties';
+        const method = editingId ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error('Failed to save property');
         
+        // Refresh properties list
+        const updatedResponse = await fetch('/api/properties');
+        const updatedData = await updatedResponse.json();
+        setProperties(updatedData);
+
+        setEditingId(null);
         setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '' });
       } catch (error) {
-        handleFirestoreError(error, editingId ? OperationType.UPDATE : OperationType.CREATE, 'properties');
+        console.error("Error saving property:", error);
+        alert("Erreur lors de la sauvegarde du bien.");
       } finally {
         setIsAdminSubmitting(false);
       }
@@ -665,7 +454,18 @@ function MainApp() {
                 </div>
                 <div className="flex gap-1">
                   <button onClick={() => { setEditingId(p.id!); setAdminFormData({ ...p, images: p.images?.join('\n') || '', beds: String(p.beds), bathrooms: String(p.bathrooms) }); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
-                  <button onClick={async () => { if(confirm('Supprimer ce bien ?')) await deleteDoc(doc(db, 'properties', p.id!)); }} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={18} /></button>
+                  <button onClick={async () => { 
+                    if(confirm('Supprimer ce bien ?')) {
+                      try {
+                        const response = await fetch(`/api/properties/${p.id}`, { method: 'DELETE' });
+                        if (!response.ok) throw new Error('Failed to delete property');
+                        setProperties(properties.filter(prop => prop.id !== p.id));
+                      } catch (error) {
+                        console.error("Error deleting property:", error);
+                        alert("Erreur lors de la suppression.");
+                      }
+                    }
+                  }} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={18} /></button>
                 </div>
               </div>
             ))}

@@ -28,19 +28,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      let displayMessage = "Une erreur inattendue s'est produite.";
+      const displayMessage = this.state.error?.message || "Une erreur inattendue s'est produite.";
       
-      try {
-        // Check if it's our JSON error from handleFirestoreError
-        const parsed = JSON.parse(this.state.error?.message || '');
-        if (parsed.error && parsed.operationType) {
-          displayMessage = `Erreur Firestore (${parsed.operationType}): ${parsed.error}`;
-        }
-      } catch (e) {
-        // Not a JSON error
-        displayMessage = this.state.error?.message || displayMessage;
-      }
-
       return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
           <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-red-100 text-center">
