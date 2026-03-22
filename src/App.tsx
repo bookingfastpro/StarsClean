@@ -42,9 +42,9 @@ const ElegantLogo = ({ isDark = false }) => (
       className={`h-10 md:h-12 object-contain ${!isDark ? 'brightness-0 opacity-90' : ''}`}
       referrerPolicy="no-referrer"
     />
-    <div className="flex flex-col leading-none hidden sm:flex">
-      <span className={`text-sm md:text-base font-medium tracking-[0.25em] uppercase ${!isDark ? 'text-slate-900' : 'text-white'}`}>Star's Clean</span>
-      <span className={`text-[10px] md:text-[11px] font-light tracking-[0.4em] uppercase mt-1 ${!isDark ? 'text-slate-500' : 'text-slate-300'}`}>Conciergerie</span>
+    <div className="flex flex-col leading-none">
+      <span className={`text-[10px] sm:text-sm md:text-base font-medium tracking-[0.2em] sm:tracking-[0.25em] uppercase ${!isDark ? 'text-slate-900' : 'text-white'}`}>Star's Clean</span>
+      <span className={`text-[8px] sm:text-[10px] md:text-[11px] font-light tracking-[0.3em] sm:tracking-[0.4em] uppercase mt-0.5 sm:mt-1 ${!isDark ? 'text-slate-500' : 'text-slate-300'}`}>Conciergerie</span>
     </div>
   </div>
 );
