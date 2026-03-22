@@ -4,7 +4,7 @@ import {
   ChevronDown, Menu, X, Plus, Trash2, Image as ImageIcon, Sparkles, 
   ShieldCheck, Clock, ArrowRight, Key, Users, Bath, Accessibility, Edit2,
   Briefcase, Ship, Car, Coffee, Heart, Plane, Calendar, Camera, Sun, Wine, Bell, Umbrella, CheckCircle,
-  ChevronLeft, ChevronRight, Star, Quote, TrendingUp, Map, Award, Zap, Lock, LogOut
+  ChevronLeft, ChevronRight, Star, Quote, TrendingUp, Map, Award, Zap, Lock, LogOut, Compass, Waves, Mountain
 } from 'lucide-react';
 import { Property, Review, Category } from './types';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -507,25 +507,202 @@ function MainApp() {
   );
 
   const renderGestionSejours = () => (
-    <div className="pt-32 pb-20 px-4 max-w-7xl mx-auto text-center">
-      <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Organisation de Séjours</h1>
-      <p className="text-slate-500 text-xl max-w-2xl mx-auto mb-16">Nous créons l'exceptionnel sur-mesure pour vos vacances.</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {["Bateau", "Voiture", "Hélicoptère", "Terroir", "Aventures", "Assistance"].map((t, idx) => (
-          <div key={idx} className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:-translate-y-2 transition-all"><h3 className="text-xl font-bold mb-3">{t} Sur-Mesure</h3><p className="text-slate-400 text-sm">Service exclusif disponible sur demande.</p></div>
-        ))}
-      </div>
+    <div className="animate-fade-in">
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4 bg-slate-950 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <img 
+            src="https://images.unsplash.com/photo-1534008843454-8a7389bd1682?auto=format&fit=crop&w=1920&q=80" 
+            className="w-full h-full object-cover" 
+            alt="Corse du Sud"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950"></div>
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          <h1 className="text-4xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
+            Gestion des séjours dans <br/> <span className="text-blue-500">l'extrême Sud de la Corse</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto font-medium">
+            Star's Clean Conciergerie vous crée un séjour sur mesure en Corse-du-Sud
+          </p>
+        </div>
+      </section>
+
+      {/* Intro Section */}
+      <section className="py-20 px-4 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="space-y-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+              L'excellence au service de vos vacances
+            </h2>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              Star's Clean Conciergerie est à votre service pour la gestion et l'organisation des séjours en location saisonnière dans l'extrême Sud de la Corse.
+            </p>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              Qu'il s’agisse d’un souhait de réservation, d'une organisation de séjour ou d'une gestion de votre bien immobilier, nous vous assurons un travail soigné et méticuleux.
+            </p>
+            <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100">
+              <p className="text-blue-800 font-bold text-xl italic">
+                "Gagnez du temps en confiant l'organisation de vos vacances à Star's Clean Conciergerie."
+              </p>
+            </div>
+            <Button onClick={() => navigate('contact')} className="px-10">Nous confier votre séjour</Button>
+          </div>
+          <div className="relative">
+            <img 
+              src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1000&q=80" 
+              className="rounded-[3rem] shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500" 
+              alt="Vacances en Corse"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden md:block">
+              <div className="flex items-center gap-4">
+                <div className="bg-blue-600 text-white p-3 rounded-xl"><Clock size={24}/></div>
+                <div>
+                  <p className="font-bold text-slate-900">Gain de temps</p>
+                  <p className="text-sm text-slate-500">On s'occupe de tout</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Activities Section */}
+      <section className="py-24 px-4 bg-slate-50 border-y border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Nous organisons votre séjour selon vos envies</h2>
+            <p className="text-slate-500 text-xl max-w-2xl mx-auto">Une multitude d'activités exclusives s'offrent à vous dans l'extrême Sud.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { icon: <Ship className="text-blue-600" size={32} />, title: "Location de bateau", desc: "Promenade en mer et apéro sunset dans les plus belles criques." },
+              { icon: <Waves className="text-cyan-500" size={32} />, title: "Plongée & Canyoning", desc: "Découvrez les fonds marins ou les rivières sauvages de l'île." },
+              { icon: <Car className="text-slate-700" size={32} />, title: "Quad & Buggy", desc: "Randonnées hors des sentiers battus à travers le maquis." },
+              { icon: <Plane className="text-indigo-600" size={32} />, title: "Hélicoptère", desc: "Découverte de l'île de beauté vue du ciel pour un moment inoubliable." },
+              { icon: <Wine className="text-red-600" size={32} />, title: "Dégustation de vins", desc: "Visite des domaines viticoles et dégustation des meilleurs crus corses." },
+              { icon: <Mountain className="text-emerald-600" size={32} />, title: "Randonnée", desc: "Parcours guidés pour découvrir les paysages à couper le souffle." },
+              { icon: <Sun className="text-orange-500" size={32} />, title: "Apéro Sunset", desc: "Organisation de moments magiques face au coucher du soleil." },
+              { icon: <Compass className="text-blue-800" size={32} />, title: "Sur-mesure", desc: "Toutes vos envies deviennent réalité grâce à notre réseau." }
+            ].map((activity, idx) => (
+              <GlassContainer key={idx} className="p-8 !bg-white border-slate-100 hover:shadow-xl transition-all group">
+                <div className="mb-6 transform group-hover:scale-110 transition-transform">{activity.icon}</div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{activity.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{activity.desc}</p>
+              </GlassContainer>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 text-center">
+        <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 p-12 md:p-20 rounded-[3rem] shadow-2xl text-white">
+          <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">Prêt pour un séjour inoubliable en Corse ?</h2>
+          <p className="text-xl text-blue-100 mb-10">Contactez-nous dès aujourd'hui pour commencer à planifier vos vacances de rêve.</p>
+          <Button variant="secondary" onClick={() => navigate('contact')} className="bg-white text-blue-600 hover:bg-blue-50 px-12 py-5 text-xl mx-auto">
+            Demander mon devis sur mesure
+          </Button>
+        </div>
+      </section>
     </div>
   );
 
   const renderPrestations = () => (
-    <div className="pt-32 pb-20 px-4 max-w-7xl mx-auto">
-      <h1 className="text-4xl md:text-6xl font-black text-center mb-16 tracking-tight">Nos Prestations</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {[{t: "Petit-Déjeuner", d: "Livraison à domicile dès 8h."}, {t: "Bien-être", d: "Massages relaxants à domicile."}, {t: "Chauffeur", d: "Transferts aéroport Figari."}, {t: "Ménage", d: "Service quotidien ou milieu de séjour."}].map((item, idx) => (
-          <div key={idx} className="p-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm flex items-start gap-6"><div className="p-4 bg-blue-50 text-blue-600 rounded-full"><Sparkles/></div><div><h3 className="text-xl font-bold mb-2">{item.t}</h3><p className="text-slate-500 text-sm">{item.d}</p></div></div>
-        ))}
-      </div>
+    <div className="animate-fade-in">
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4 bg-blue-600 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <img 
+            src="https://picsum.photos/seed/corse-beach/1920/1080" 
+            className="w-full h-full object-cover" 
+            alt="Plage Corse"
+            referrerPolicy="no-referrer"
+          />
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto text-center text-white">
+          <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
+            Les prestations de <br/> <span className="text-blue-200">Star's Clean Conciergerie</span>
+          </h1>
+          <p className="text-xl md:text-2xl max-w-3xl mx-auto font-medium opacity-90">
+            Prestations aux meilleurs prix dans l'extrême Sud de la Corse
+          </p>
+        </div>
+      </section>
+
+      {/* Intro Section */}
+      <section className="py-20 px-4 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="relative order-2 lg:order-1">
+            <img 
+              src="https://picsum.photos/seed/luxury-service/1000/800" 
+              className="rounded-[3rem] shadow-2xl border-8 border-white transform -rotate-2 hover:rotate-0 transition-transform duration-500" 
+              alt="Prestations de luxe"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+          <div className="space-y-6 order-1 lg:order-2">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+              Un service d'exception en Corse-du-Sud
+            </h2>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              Star's Clean Conciergerie propose différentes prestations dans l'extrême Sud de la Corse pour rendre votre séjour inoubliable.
+            </p>
+            <p className="text-lg text-slate-600 leading-relaxed">
+              Louez un bateau, visitez des caves renommées ou profitez d'un moment de détente absolue. Venez découvrir des coins paradisiaques avec nos services exclusifs.
+            </p>
+            <div className="flex items-center gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100 text-emerald-800 font-bold">
+              <Sparkles className="text-emerald-500" />
+              <span>N'attendez plus, venez découvrir l'île de beauté !</span>
+            </div>
+            <Button onClick={() => navigate('contact')} className="px-10 py-4 text-lg">Contactez-nous maintenant</Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Grid */}
+      <section className="py-24 px-4 bg-slate-50 border-y border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Nos Services Exclusifs</h2>
+            <p className="text-slate-500 text-xl max-w-2xl mx-auto">Tout ce dont vous avez besoin pour des vacances parfaites.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { icon: <Car className="text-blue-600" size={32} />, title: "Location de voitures", desc: "Une large gamme de véhicules pour parcourir les routes corses en toute liberté." },
+              { icon: <Ship className="text-cyan-600" size={32} />, title: "Location de bateau", desc: "Explorez les criques inaccessibles et profitez d'une journée en mer exceptionnelle." },
+              { icon: <Wine className="text-red-600" size={32} />, title: "Visite des caves", desc: "Dégustation des meilleurs crus locaux et découverte du terroir corse." },
+              { icon: <Coffee className="text-orange-600" size={32} />, title: "Petit déjeuner", desc: "Livraison de viennoiseries fraîches et produits locaux directement à votre porte." },
+              { icon: <Heart className="text-pink-600" size={32} />, title: "Soin & Massage", desc: "Un moment de détente absolue avec nos praticiens qualifiés à domicile." },
+              { icon: <Plane className="text-indigo-600" size={32} />, title: "Transport Aéroport", desc: "Transferts privés depuis et vers l'aéroport de Figari en toute sérénité." }
+            ].map((service, idx) => (
+              <div key={idx} className="p-10 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all group">
+                <div className="mb-6 p-4 bg-slate-50 w-fit rounded-2xl group-hover:bg-blue-50 transition-colors">{service.icon}</div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">{service.title}</h3>
+                <p className="text-slate-500 leading-relaxed">{service.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-24 px-4">
+        <div className="max-w-5xl mx-auto text-center space-y-8">
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight">Prêt à vivre l'exceptionnel ?</h2>
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto">
+            Star's Clean Conciergerie est votre partenaire de confiance pour un séjour sans contraintes dans l'extrême Sud de la Corse.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Button onClick={() => navigate('contact')} className="px-12 py-5 text-xl">Réserver une prestation</Button>
+            <Button variant="outline" onClick={() => navigate('properties')} className="px-12 py-5 text-xl">Voir nos biens</Button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 
