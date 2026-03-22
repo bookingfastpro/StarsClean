@@ -168,7 +168,7 @@ function MainApp() {
             <button onClick={() => navigate('admin')} className={`px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-100 transition-colors ${route === 'admin' ? 'bg-blue-100' : ''}`}>Admin</button>
           )}
         </div>
-        <button className="lg:hidden text-slate-800" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <button className="lg:hidden text-slate-800" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}>
           {isMobileMenuOpen ? <X /> : <Menu />}
         </button>
       </div>
@@ -285,7 +285,7 @@ function MainApp() {
             <GlassContainer key={r.id} className="p-8 text-left !bg-white border-slate-100 shadow-sm">
               <div className="flex gap-1 mb-4">{[...Array(5)].map((_, i) => <Star key={i} size={16} className="text-yellow-400" fill="currentColor" />)}</div>
               <p className="text-slate-700 italic mb-6 leading-relaxed">"{r.text}"</p>
-              <div className="flex items-center gap-3"><img src={r.avatar} className="w-10 h-10 rounded-full border border-slate-100" alt="" referrerPolicy="no-referrer" /><div><p className="font-bold text-sm">{r.author}</p><p className="text-xs text-slate-400">{r.date}</p></div></div>
+              <div className="flex items-center gap-3"><img src={r.avatar} className="w-10 h-10 rounded-full border border-slate-100" alt="" referrerPolicy="no-referrer" /><div><p className="font-bold text-sm">{r.author}</p><p className="text-xs text-slate-500">{r.date}</p></div></div>
             </GlassContainer>
           ))}
         </div>
@@ -731,10 +731,10 @@ function MainApp() {
           <div className="md:col-span-5">
             <div className="mb-8 cursor-pointer" onClick={() => navigate('home')}><ElegantLogo isDark={true} /></div>
             <p className="text-slate-400 max-w-sm mb-8">Professionnels spécialisés dans la gestion locative et la conciergerie dans l'extrême Sud de la Corse.</p>
-            <a href="#" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-blue-600 border border-white/10 transition-all"><Instagram size={22} /></a>
+            <a href="#" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-blue-600 border border-white/10 transition-all" aria-label="Suivez-nous sur Instagram"><Instagram size={22} /></a>
           </div>
           <div className="md:col-span-3">
-            <h4 className="font-black text-white mb-6 uppercase text-xs tracking-widest">Navigation</h4>
+            <h2 className="font-black text-white mb-6 uppercase text-xs tracking-widest">Navigation</h2>
             <ul className="space-y-4 text-sm text-slate-400">
               <li><button onClick={() => navigate('home')} className="hover:text-blue-400 transition-colors">Accueil</button></li>
               <li><button onClick={() => navigate('conciergerie')} className="hover:text-blue-400 transition-colors">Conciergerie</button></li>
@@ -743,15 +743,15 @@ function MainApp() {
             </ul>
           </div>
           <div className="md:col-span-4">
-            <h4 className="font-black text-white mb-6 uppercase text-xs tracking-widest">Prestations</h4>
+            <h2 className="font-black text-white mb-6 uppercase text-xs tracking-widest">Prestations</h2>
             <ul className="space-y-4 text-sm text-slate-400">
               <li><button onClick={() => navigate('sejours')} className="hover:text-blue-400 transition-colors">Gestion des séjours</button></li>
               <li><button onClick={() => navigate('prestations')} className="hover:text-blue-400 transition-colors">Prestations à la carte</button></li>
-              <li><button onClick={() => navigate('admin')} className="text-[10px] text-slate-600 hover:text-blue-400 font-bold mt-4 block transition-colors">Accès Privé</button></li>
+              <li><button onClick={() => navigate('admin')} className="text-[10px] text-slate-400 hover:text-blue-400 font-bold mt-4 block transition-colors">Accès Privé</button></li>
             </ul>
           </div>
         </div>
-        <div className="text-center text-xs text-slate-600 border-t border-white/5 pt-10">@ 2026 Propulsé par Bookingfast</div>
+        <div className="text-center text-xs text-slate-400 border-t border-white/5 pt-10">@ 2026 Propulsé par Bookingfast</div>
       </div>
     </footer>
   );
