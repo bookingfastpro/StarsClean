@@ -751,7 +751,7 @@ function MainApp() {
             </ul>
           </div>
         </div>
-        <div className="text-center text-xs text-slate-600 border-t border-white/5 pt-10">&copy; {new Date().getFullYear()} Star's Clean Conciergerie.</div>
+        <div className="text-center text-xs text-slate-600 border-t border-white/5 pt-10">@ 2026 Propulsé par Bookingfast</div>
       </div>
     </footer>
   );
