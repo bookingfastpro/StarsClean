@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Home, MapPin, BedDouble, Phone, Mail, Instagram, 
   ChevronDown, Menu, X, Plus, Trash2, Image as ImageIcon, Sparkles, 
@@ -24,7 +24,7 @@ const GlassContainer = ({ children, className = "", onClick }: { children: React
 );
 
 const Button = ({ children, variant = 'primary', className = '', ...props }: any) => {
-  const baseStyle = "px-8 py-4 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-lg shadow-xl";
+  const baseStyle = "px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-base md:text-lg shadow-xl";
   const variants: any = {
     primary: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/40",
     secondary: "bg-white/20 backdrop-blur-md border border-white/40 text-white hover:bg-white/30",
@@ -37,7 +37,7 @@ const Button = ({ children, variant = 'primary', className = '', ...props }: any
 const ElegantLogo = ({ isDark = false }) => (
   <div className="flex items-center gap-4">
     <img 
-      src="https://cdn.discordapp.com/attachments/1034881615635173376/1485017071333937233/logo-en-cours-stars-clean-conciergerie-V5-blanc.png?ex=69c0556c&is=69bf03ec&hm=319270b6503e96197afca618f22597f29f63a08224561c4968d39b79b6912aab&" 
+      src="https://media.discordapp.net/attachments/1034881615635173376/1485017071333937233/logo-en-cours-stars-clean-conciergerie-V5-blanc.png?ex=69c24fac&is=69c0fe2c&hm=1c06a6a31ea7c2c8cc8ce376536be09d08fec37ac9256ad15781180dde679fee&=&format=webp&quality=lossless" 
       alt="Logo Star's Clean" 
       className={`h-10 md:h-12 object-contain ${!isDark ? 'brightness-0 opacity-90' : ''}`}
       referrerPolicy="no-referrer"
@@ -59,6 +59,28 @@ function MainApp() {
   const [route, setRoute] = useState('home'); 
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const reviewSliderRef = useRef<HTMLDivElement>(null);
+
+  const handleSliderScroll = () => {
+    if (sliderRef.current) {
+      const scrollLeft = sliderRef.current.scrollLeft;
+      const width = sliderRef.current.offsetWidth;
+      const index = Math.round(scrollLeft / width);
+      setActiveSlideIndex(index);
+    }
+  };
+
+  const handleReviewScroll = () => {
+    if (reviewSliderRef.current) {
+      const scrollLeft = reviewSliderRef.current.scrollLeft;
+      const width = reviewSliderRef.current.offsetWidth;
+      const index = Math.round(scrollLeft / width);
+      setActiveReviewIndex(index);
+    }
+  };
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -221,36 +243,63 @@ function MainApp() {
   const renderHome = () => (
     <div className="animate-fade-in">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+      <section className="relative min-h-[100svh] flex items-center justify-center px-4 pt-24 pb-12 md:py-0 overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden bg-slate-950">
           <div className="absolute inset-0 w-full h-full animate-slow-pan opacity-70" style={{ backgroundImage: "url('https://www.sothebysrealty-france.com/datas/biens/images/19442/19442_01-2023-05-17-1427.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-transparent to-slate-950/80"></div>
           <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px]"></div>
         </div>
-        <div className="relative z-10 max-w-6xl mx-auto text-center pt-20 flex flex-col items-center">
-          <span className="inline-flex items-center gap-2 py-2 px-6 rounded-full bg-blue-600/20 text-blue-300 border border-blue-500/30 backdrop-blur-md font-semibold text-sm mb-8 animate-slide-up shadow-lg"><Award size={18} /> Conciergerie d'excellence</span>
-          <h1 className="text-5xl md:text-8xl font-black text-white mb-8 leading-[1.1] animate-slide-up drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] tracking-tighter">Conciergerie, gestion locative <br/> en <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#C5A059] via-[#8F6F3D] to-[#634E26] filter drop-shadow-sm font-black">Corse-du-Sud</span></h1>
-          <div className="max-w-3xl mx-auto mb-10 space-y-4 animate-slide-up" style={{ animationDelay: '0.15s' }}>
-            <p className="text-xl md:text-2xl text-slate-100 drop-shadow-lg font-medium leading-relaxed">Star's Clean Conciergerie est une entreprise spécialisée dans la gestion des séjours dans l'extrême Sud de la Corse.</p>
-            <p className="text-lg text-slate-300 drop-shadow-md font-normal leading-relaxed">Professionnels de l'immobilier avec 4 ans d'expérience dans le domaine, nous vous assurons la réussite de tous vos projets.</p>
-            <p className="text-base text-[#A87952] uppercase tracking-[0.2em] font-bold mt-6">Particuliers • Professionnels</p>
+        <div className="relative z-10 max-w-6xl mx-auto text-center flex flex-col items-center">
+          <span className="inline-flex items-center gap-2 py-2 px-6 rounded-full bg-blue-600/20 text-blue-300 border border-blue-500/30 backdrop-blur-md font-semibold text-xs md:text-sm mb-4 md:mb-8 animate-slide-up shadow-lg"><Award size={18} /> Conciergerie d'excellence</span>
+          <h1 className="text-3xl sm:text-4xl md:text-8xl font-semibold text-white mb-4 md:mb-8 leading-[1.2] md:leading-[1.1] animate-slide-up drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] tracking-tighter">Conciergerie, gestion locative <br/> en <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 filter drop-shadow-sm font-semibold">Corse-du-Sud</span></h1>
+          <div className="max-w-3xl mx-auto mb-6 md:mb-10 space-y-2 md:space-y-4 animate-slide-up" style={{ animationDelay: '0.15s' }}>
+            <p className="text-base md:text-2xl text-slate-100 drop-shadow-lg font-medium leading-relaxed">Star's Clean Conciergerie est une entreprise spécialisée dans la gestion des séjours dans l'extrême Sud de la Corse.</p>
+            <p className="text-sm md:text-lg text-slate-300 drop-shadow-md font-normal leading-relaxed">Professionnels de l'immobilier avec 5 ans d'expérience dans le domaine, nous vous assurons la réussite de tous vos projets.</p>
+            <p className="text-xs md:text-base text-blue-400 uppercase tracking-[0.2em] font-bold mt-4 md:mt-6">Particuliers • Professionnels</p>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-            <Button variant="gold" onClick={() => navigate('properties')} className="px-10">Découvrir nos biens <ArrowRight size={22} className="ml-1" /></Button>
-            <Button variant="secondary" onClick={() => navigate('contact')} className="px-10">Nous contacter</Button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-6 animate-slide-up w-full max-w-xs sm:max-w-none" style={{ animationDelay: '0.3s' }}>
+            <Button variant="primary" onClick={() => navigate('properties')} className="px-8 md:px-10 w-full sm:w-auto">Découvrir nos biens <ArrowRight size={22} className="ml-1" /></Button>
+            <Button variant="secondary" onClick={() => navigate('contact')} className="px-8 md:px-10 w-full sm:w-auto">Nous contacter</Button>
           </div>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce opacity-50 cursor-pointer" onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}><ChevronDown size={32} className="text-white" /></div>
+        <div className="hidden md:block absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce opacity-50 cursor-pointer" onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}><ChevronDown size={32} className="text-white" /></div>
       </section>
 
       {/* Biens à la une */}
-      <section className="py-20 px-4 max-w-7xl mx-auto">
+      <section className="py-20 px-4 max-w-7xl mx-auto overflow-hidden">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Nos Biens à la une</h2>
           <p className="text-slate-500 text-lg">Découvrez une sélection de nos plus beaux logements en gestion.</p>
         </div>
         {loading ? <div className="h-40 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div> :
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">{displayProperties.slice(0, 6).map(p => <PropertyCard key={p.id} property={p} />)}</div>
+          <div className="relative">
+            <div 
+              ref={sliderRef}
+              onScroll={handleSliderScroll}
+              className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none scrollbar-hide pb-4 -mx-4 px-4 md:mx-0 md:px-0"
+            >
+              {displayProperties.slice(0, 6).map((p) => (
+                <div key={p.id} className="min-w-[85vw] sm:min-w-[400px] md:min-w-0 snap-center">
+                  <PropertyCard property={p} />
+                </div>
+              ))}
+            </div>
+            
+            {/* Pagination dots for mobile */}
+            <div className="flex md:hidden flex-col items-center gap-3 mt-6">
+              <div className="flex justify-center gap-2">
+                {displayProperties.slice(0, 6).map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`h-2 rounded-full transition-all duration-300 ${activeSlideIndex === i ? 'w-6 bg-blue-600' : 'w-2 bg-slate-300'}`}
+                  />
+                ))}
+              </div>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                {activeSlideIndex + 1} / {Math.min(displayProperties.length, 6)}
+              </span>
+            </div>
+          </div>
         }
         <div className="mt-12 flex justify-center w-full"><Button onClick={() => navigate('properties')}>Voir tout notre catalogue ({displayProperties.length})</Button></div>
       </section>
@@ -277,18 +326,49 @@ function MainApp() {
       </section>
 
       {/* Avis Google */}
-      <section className="py-20 px-4 max-w-7xl mx-auto text-center">
+      <section className="py-20 px-4 max-w-7xl mx-auto text-center overflow-hidden">
         <h2 className="text-3xl font-bold text-slate-900 mb-4 tracking-tight">Avis de nos clients</h2>
         <p className="text-slate-500 mb-12">La satisfaction de nos propriétaires et voyageurs est notre priorité.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {GOOGLE_REVIEWS.map(r => (
-            <GlassContainer key={r.id} className="p-8 text-left !bg-white border-slate-100 shadow-sm">
-              <div className="flex gap-1 mb-4">{[...Array(5)].map((_, i) => <Star key={i} size={16} className="text-yellow-400" fill="currentColor" />)}</div>
-              <p className="text-slate-700 italic mb-6 leading-relaxed">"{r.text}"</p>
-              <div className="flex items-center gap-3"><img src={r.avatar} className="w-10 h-10 rounded-full border border-slate-100" alt="" referrerPolicy="no-referrer" /><div><p className="font-bold text-sm">{r.author}</p><p className="text-xs text-slate-500">{r.date}</p></div></div>
-            </GlassContainer>
-          ))}
+        
+        <div className="relative">
+          <div 
+            ref={reviewSliderRef}
+            onScroll={handleReviewScroll}
+            className="flex md:grid md:grid-cols-3 gap-6 md:gap-8 overflow-x-auto md:overflow-x-visible snap-x snap-mandatory md:snap-none scrollbar-hide pb-4 -mx-4 px-4 md:mx-0 md:px-0"
+          >
+            {GOOGLE_REVIEWS.map(r => (
+              <div key={r.id} className="min-w-[85vw] sm:min-w-[350px] md:min-w-0 snap-center">
+                <GlassContainer className="p-8 text-left h-full !bg-white border-slate-100 shadow-sm flex flex-col">
+                  <div className="flex gap-1 mb-4">{[...Array(5)].map((_, i) => <Star key={i} size={16} className="text-yellow-400" fill="currentColor" />)}</div>
+                  <p className="text-slate-700 italic mb-6 leading-relaxed flex-grow">"{r.text}"</p>
+                  <div className="flex items-center gap-3 mt-auto">
+                    <img src={r.avatar} className="w-10 h-10 rounded-full border border-slate-100" alt="" referrerPolicy="no-referrer" />
+                    <div>
+                      <p className="font-bold text-sm">{r.author}</p>
+                      <p className="text-xs text-slate-500">{r.date}</p>
+                    </div>
+                  </div>
+                </GlassContainer>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination dots for mobile */}
+          <div className="flex md:hidden flex-col items-center gap-3 mt-8">
+            <div className="flex justify-center gap-2">
+              {GOOGLE_REVIEWS.map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`h-2 rounded-full transition-all duration-300 ${activeReviewIndex === i ? 'w-6 bg-blue-600' : 'w-2 bg-slate-300'}`}
+                />
+              ))}
+            </div>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              {activeReviewIndex + 1} / {GOOGLE_REVIEWS.length}
+            </span>
+          </div>
         </div>
+
         <div className="mt-12"><a href="https://share.google/pYtB9A5Wx0rAZWp1c" target="_blank" className="inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-full font-bold hover:shadow-md transition-all"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" className="w-5" alt="" referrerPolicy="no-referrer" /> Voir les 48 avis Google</a></div>
       </section>
     </div>
