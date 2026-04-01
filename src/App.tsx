@@ -86,12 +86,12 @@ function MainApp() {
 
   // Utiliser les données réelles
   const displayProperties = useMemo(() => {
-    return properties;
+    return properties.filter(p => p.isVisible !== false);
   }, [properties]);
 
   // État du formulaire Admin
   const [adminFormData, setAdminFormData] = useState({
-    title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: ''
+    title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true
   });
   const [isAdminSubmitting, setIsAdminSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -502,7 +502,7 @@ function MainApp() {
         setProperties(updatedData);
 
         setEditingId(null);
-        setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '' });
+        setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true });
       } catch (error) {
         console.error("Error saving property:", error);
         alert("Erreur lors de la sauvegarde du bien.");
@@ -534,8 +534,18 @@ function MainApp() {
               </div>
               <textarea className="w-full p-3 bg-slate-50 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600" placeholder="Images (ligne par ligne)" value={adminFormData.images} onChange={e => setAdminFormData({...adminFormData, images: e.target.value})} rows={4} />
               <textarea className="w-full p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Description" value={adminFormData.desc} onChange={e => setAdminFormData({...adminFormData, desc: e.target.value})} rows={4} required />
+              <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
+                <input 
+                  type="checkbox" 
+                  id="isVisible" 
+                  checked={adminFormData.isVisible} 
+                  onChange={e => setAdminFormData({...adminFormData, isVisible: e.target.checked})}
+                  className="w-5 h-5 accent-blue-600"
+                />
+                <label htmlFor="isVisible" className="text-sm font-medium text-slate-700 cursor-pointer">Visible sur le site</label>
+              </div>
               <Button className="w-full py-4" disabled={isAdminSubmitting}>{isAdminSubmitting ? 'Envoi...' : (editingId ? 'Mettre à jour' : 'Sauvegarder')}</Button>
-              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '' }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
+              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
             </form>
           </div>
           <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -546,7 +556,27 @@ function MainApp() {
                   <p className="font-bold truncate text-sm text-slate-900">{p.title}</p>
                 </div>
                 <div className="flex gap-1">
-                  <button onClick={() => { setEditingId(p.id!); setAdminFormData({ ...p, images: p.images?.join('\n') || '', beds: String(p.beds), bathrooms: String(p.bathrooms) }); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
+                  <button 
+                    onClick={async () => {
+                      const updatedProperty = { ...p, isVisible: p.isVisible === false ? true : false };
+                      try {
+                        const response = await fetch(`/api/properties/${p.id}`, {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(updatedProperty)
+                        });
+                        if (!response.ok) throw new Error('Failed to update visibility');
+                        setProperties(properties.map(prop => prop.id === p.id ? updatedProperty : prop));
+                      } catch (error) {
+                        console.error("Error updating visibility:", error);
+                      }
+                    }} 
+                    className={`p-2 rounded-lg transition-colors ${p.isVisible === false ? 'text-slate-400 hover:bg-slate-100' : 'text-emerald-600 hover:bg-emerald-50'}`}
+                    title={p.isVisible === false ? "Masqué (cliquer pour afficher)" : "Visible (cliquer pour masquer)"}
+                  >
+                    {p.isVisible === false ? <Lock size={18} /> : <CheckCircle size={18} />}
+                  </button>
+                  <button onClick={() => { setEditingId(p.id!); setAdminFormData({ ...p, images: p.images?.join('\n') || '', beds: String(p.beds), bathrooms: String(p.bathrooms), isVisible: p.isVisible !== false }); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
                   <button onClick={async () => { 
                     if(confirm('Supprimer ce bien ?')) {
                       try {
@@ -570,12 +600,12 @@ function MainApp() {
 
   const renderConciergerie = () => (
     <div className="pt-32 pb-20 px-4 max-w-7xl mx-auto">
-      <div className="text-center mb-16"><h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Conciergerie & Gestion Locative</h1><p className="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">Libérez-vous des contraintes et profitez sereinement de vos revenus locatifs.</p></div>
+      <div className="text-center mb-16"><h1 className="text-4xl md:text-6xl font-semibold mb-6 tracking-tight">Conciergerie & Gestion Locative</h1><p className="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">Libérez-vous des contraintes et profitez sereinement de vos revenus locatifs.</p></div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-20">
         <div className="space-y-8">
            <h2 className="text-3xl font-bold text-slate-900">Une offre clé en main</h2>
            <div className="grid gap-6">
-              {[{t:"Annonces Multi-plateformes", d:"Airbnb, Booking, Abritel..."}, {t:"Ménage & Blanchisserie", d:"Nettoyage professionnel systématique."}, {t:"Maintenance", d:"Contrôle rigoureux après chaque voyageur."}, {t:"Accueil", d:"Remise des clés et bons plans."}].map((item, idx) => (
+              {[{t:"Annonce multi plateforme : 80% de la clientèle passe en directe", d:"Et le reste sur Airbnb, Booking, Abritel..."}, {t:"Ménage & Blanchisserie", d:"Nettoyage professionnel systématique."}, {t:"Maintenance", d:"Contrôle rigoureux après chaque voyageur."}, {t:"Accueil", d:"Remise des clés et bons plans."}].map((item, idx) => (
                 <div key={idx} className="flex gap-4 p-6 bg-slate-50 rounded-2xl border border-slate-100"><CheckCircle className="text-emerald-500 shrink-0" size={24} /><div><h3 className="font-bold text-slate-900 mb-1">{item.t}</h3><p className="text-sm text-slate-500">{item.d}</p></div></div>
               ))}
            </div>
@@ -600,7 +630,7 @@ function MainApp() {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950"></div>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
+          <h1 className="text-4xl md:text-7xl font-semibold text-white mb-6 tracking-tight leading-tight">
             Gestion des séjours dans <br/> <span className="text-blue-500">l'extrême Sud de la Corse</span>
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto font-medium">
@@ -704,7 +734,7 @@ function MainApp() {
           />
         </div>
         <div className="relative z-10 max-w-7xl mx-auto text-center text-white">
-          <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight leading-tight">
+          <h1 className="text-4xl md:text-7xl font-semibold mb-6 tracking-tight leading-tight">
             Les prestations de <br/> <span className="text-blue-200">Star's Clean Conciergerie</span>
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto font-medium opacity-90">
@@ -788,7 +818,7 @@ function MainApp() {
 
   const renderContact = () => (
     <div className="pt-32 pb-20 px-4 max-w-5xl mx-auto text-center">
-      <h1 className="text-4xl md:text-6xl font-black mb-12">Contactez-nous</h1>
+      <h1 className="text-4xl md:text-6xl font-semibold mb-12">Contactez-nous</h1>
       <GlassContainer className="p-8 !bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 text-left">
           <div><p className="font-bold mb-2 text-slate-900">Téléphone</p><p className="text-blue-600 font-bold">+33 (0)6 42 65 85 98</p></div>
