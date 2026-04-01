@@ -94,6 +94,7 @@ function MainApp() {
     title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true
   });
   const [isAdminSubmitting, setIsAdminSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Initialisation Auth (Session locale)
@@ -511,6 +512,42 @@ function MainApp() {
       }
     };
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+
+      setIsUploading(true);
+      const newImages = [...(adminFormData.images.split('\n').filter(s => s.trim()))];
+
+      for (let i = 0; i < files.length; i++) {
+        const formData = new FormData();
+        formData.append('image', files[i]);
+
+        try {
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) throw new Error('Upload failed');
+          const data = await response.json();
+          newImages.push(data.url);
+        } catch (error) {
+          console.error("Upload error:", error);
+          alert("Erreur lors de l'upload d'une image.");
+        }
+      }
+
+      setAdminFormData({ ...adminFormData, images: newImages.join('\n') });
+      setIsUploading(false);
+    };
+
+    const removeImage = (index: number) => {
+      const images = adminFormData.images.split('\n').filter(s => s.trim());
+      images.splice(index, 1);
+      setAdminFormData({ ...adminFormData, images: images.join('\n') });
+    };
+
     return (
       <div className="pt-32 pb-20 px-4 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
@@ -528,21 +565,64 @@ function MainApp() {
                 <option value="villas">Villas</option>
               </select>
               <input className="w-full p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Localisation" value={adminFormData.location} onChange={e => setAdminFormData({...adminFormData, location: e.target.value})} required />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
+                <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Capacité" value={adminFormData.capacity} onChange={e => setAdminFormData({...adminFormData, capacity: e.target.value})} required />
                 <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="number" placeholder="Ch." value={adminFormData.beds} onChange={e => setAdminFormData({...adminFormData, beds: e.target.value})} />
                 <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="number" placeholder="Sdb" value={adminFormData.bathrooms} onChange={e => setAdminFormData({...adminFormData, bathrooms: e.target.value})} />
               </div>
-              <textarea className="w-full p-3 bg-slate-50 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-600" placeholder="Images (ligne par ligne)" value={adminFormData.images} onChange={e => setAdminFormData({...adminFormData, images: e.target.value})} rows={4} />
-              <textarea className="w-full p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Description" value={adminFormData.desc} onChange={e => setAdminFormData({...adminFormData, desc: e.target.value})} rows={4} required />
-              <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
-                <input 
-                  type="checkbox" 
-                  id="isVisible" 
-                  checked={adminFormData.isVisible} 
-                  onChange={e => setAdminFormData({...adminFormData, isVisible: e.target.checked})}
-                  className="w-5 h-5 accent-blue-600"
+              
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700 block">Images du bien</label>
+                <div className="grid grid-cols-4 gap-2 mb-2">
+                  {adminFormData.images.split('\n').filter(s => s.trim()).map((img, idx) => (
+                    <div key={idx} className="relative group aspect-square">
+                      <img src={img} className="w-full h-full object-cover rounded-lg border border-slate-200" alt="" referrerPolicy="no-referrer" />
+                      <button 
+                        type="button" 
+                        onClick={() => removeImage(idx)}
+                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                  <label className={`aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <input type="file" className="hidden" accept="image/*" multiple onChange={handleFileUpload} disabled={isUploading} />
+                    {isUploading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div> : <Plus size={20} className="text-slate-400" />}
+                    <span className="text-[10px] text-slate-400 mt-1">{isUploading ? '...' : 'Ajouter'}</span>
+                  </label>
+                </div>
+                <textarea 
+                  className="w-full p-3 bg-slate-50 rounded-xl text-[10px] outline-none focus:ring-2 focus:ring-blue-600 font-mono" 
+                  placeholder="Ou collez des URLs (une par ligne)" 
+                  value={adminFormData.images} 
+                  onChange={e => setAdminFormData({...adminFormData, images: e.target.value})} 
+                  rows={2} 
                 />
-                <label htmlFor="isVisible" className="text-sm font-medium text-slate-700 cursor-pointer">Visible sur le site</label>
+              </div>
+
+              <textarea className="w-full p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Description" value={adminFormData.desc} onChange={e => setAdminFormData({...adminFormData, desc: e.target.value})} rows={4} required />
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
+                  <input 
+                    type="checkbox" 
+                    id="isVisible" 
+                    checked={adminFormData.isVisible} 
+                    onChange={e => setAdminFormData({...adminFormData, isVisible: e.target.checked})}
+                    className="w-5 h-5 accent-blue-600"
+                  />
+                  <label htmlFor="isVisible" className="text-sm font-medium text-slate-700 cursor-pointer">Visible sur le site</label>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl">
+                  <input 
+                    type="checkbox" 
+                    id="pmr" 
+                    checked={adminFormData.pmr} 
+                    onChange={e => setAdminFormData({...adminFormData, pmr: e.target.checked})}
+                    className="w-5 h-5 accent-indigo-600"
+                  />
+                  <label htmlFor="pmr" className="text-sm font-medium text-slate-700 cursor-pointer">Accès PMR / Handicapé</label>
+                </div>
               </div>
               <Button className="w-full py-4" disabled={isAdminSubmitting}>{isAdminSubmitting ? 'Envoi...' : (editingId ? 'Mettre à jour' : 'Sauvegarder')}</Button>
               {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}

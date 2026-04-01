@@ -4,6 +4,8 @@ import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import { createClient } from "@supabase/supabase-js";
+import multer from "multer";
 
 dotenv.config();
 
@@ -15,6 +17,14 @@ const PROPERTIES_FILE = path.join(process.cwd(), "properties.json");
 // Admin credentials from environment variables
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "stars-clean-2026";
+
+// Supabase client initialization
+const supabaseUrl = process.env.SUPABASE_URL || "";
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
+const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
+
+// Multer setup for memory storage
+const upload = multer({ storage: multer.memoryStorage() });
 
 async function startServer() {
   const app = express();
@@ -32,8 +42,54 @@ async function startServer() {
     }
   });
 
+  // Upload endpoint
+  app.post("/api/upload", upload.single("image"), async (req, res) => {
+    try {
+      if (!supabase) {
+        return res.status(500).json({ error: "Supabase not configured" });
+      }
+      if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      const file = req.file;
+      const fileExt = file.originalname.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `properties/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from("property-images")
+        .upload(filePath, file.buffer, {
+          contentType: file.mimetype,
+          upsert: true,
+        });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("property-images")
+        .getPublicUrl(filePath);
+
+      res.json({ url: publicUrl });
+    } catch (error) {
+      console.error("Upload error:", error);
+      res.status(500).json({ error: "Failed to upload image" });
+    }
+  });
+
   app.get("/api/properties", async (req, res) => {
     try {
+      if (supabase) {
+        const { data, error } = await supabase
+          .from("properties")
+          .select("*")
+          .order("created_at", { ascending: false });
+        
+        if (error) throw error;
+        return res.json(data);
+      }
+      
+      // Fallback to local file if Supabase is not configured
       const data = await fs.readFile(PROPERTIES_FILE, "utf-8");
       res.json(JSON.parse(data));
     } catch (error) {
@@ -44,6 +100,17 @@ async function startServer() {
 
   app.post("/api/properties", async (req, res) => {
     try {
+      if (supabase) {
+        const { data, error } = await supabase
+          .from("properties")
+          .insert([req.body])
+          .select();
+        
+        if (error) throw error;
+        return res.status(201).json(data[0]);
+      }
+
+      // Fallback to local file
       const data = await fs.readFile(PROPERTIES_FILE, "utf-8");
       const properties = JSON.parse(data);
       const newProperty = { ...req.body, id: Date.now().toString() };
@@ -59,6 +126,19 @@ async function startServer() {
   app.put("/api/properties/:id", async (req, res) => {
     try {
       const { id } = req.params;
+      if (supabase) {
+        const { data, error } = await supabase
+          .from("properties")
+          .update(req.body)
+          .eq("id", id)
+          .select();
+        
+        if (error) throw error;
+        if (!data || data.length === 0) return res.status(404).json({ error: "Property not found" });
+        return res.json(data[0]);
+      }
+
+      // Fallback to local file
       const data = await fs.readFile(PROPERTIES_FILE, "utf-8");
       let properties = JSON.parse(data);
       const index = properties.findIndex((p: any) => p.id === id);
@@ -77,6 +157,17 @@ async function startServer() {
   app.delete("/api/properties/:id", async (req, res) => {
     try {
       const { id } = req.params;
+      if (supabase) {
+        const { error } = await supabase
+          .from("properties")
+          .delete()
+          .eq("id", id);
+        
+        if (error) throw error;
+        return res.status(204).send();
+      }
+
+      // Fallback to local file
       const data = await fs.readFile(PROPERTIES_FILE, "utf-8");
       let properties = JSON.parse(data);
       properties = properties.filter((p: any) => p.id !== id);
