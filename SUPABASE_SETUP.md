@@ -43,8 +43,22 @@ create table properties (
   "isVisible" boolean default true
 );
 
+-- Création de la table des demandes de contact
+create table contact_requests (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default now(),
+  name text not null,
+  email text not null,
+  message text not null
+);
+
 -- Activer la sécurité Row Level Security (RLS)
 alter table properties enable row level security;
+alter table contact_requests enable row level security;
+
+-- Politiques pour contact_requests
+create policy "Insertion publique" on contact_requests for insert with check (true);
+create policy "Lecture admin" on contact_requests for select using (true);
 
 -- Créer une politique pour permettre la lecture publique (pour le site)
 create policy "Lecture publique pour tous" 

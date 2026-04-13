@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import multer from "multer";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -31,6 +32,17 @@ if (!supabase) {
 
 // Multer setup for memory storage
 const upload = multer({ storage: multer.memoryStorage() });
+
+// Nodemailer transporter setup
+const transporter = process.env.SMTP_USER && process.env.SMTP_PASS ? nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: parseInt(process.env.SMTP_PORT || "465"),
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+}) : null;
 
 async function startServer() {
   const app = express();
@@ -117,6 +129,48 @@ async function startServer() {
     } catch (error: any) {
       console.error("List images error:", error);
       res.status(500).json({ error: "Failed to list images", message: error?.message });
+    }
+  });
+
+  // Contact endpoint
+  app.post("/api/contact", async (req, res) => {
+    const { name, email, message } = req.body;
+
+    try {
+      // 1. Save to Supabase if available
+      if (supabase) {
+        const { error: dbError } = await supabase
+          .from("contact_requests")
+          .insert([{ name, email, message }]);
+        
+        if (dbError) console.error("Supabase Contact Error:", dbError);
+      }
+
+      // 2. Send Email if transporter is configured
+      if (transporter) {
+        await transporter.sendMail({
+          from: process.env.SMTP_FROM || `"Star's Clean" <${process.env.SMTP_USER}>`,
+          to: "conciergerie.prestige2a@gmail.com",
+          subject: `Nouveau message de contact - ${name}`,
+          text: `Nom: ${name}\nEmail: ${email}\nMessage: ${message}`,
+          html: `
+            <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+              <h2 style="color: #2563eb;">Nouveau message de contact</h2>
+              <p><strong>Nom:</strong> ${name}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Message:</strong></p>
+              <div style="background: #f8fafc; padding: 15px; border-radius: 8px;">${message.replace(/\n/g, '<br>')}</div>
+            </div>
+          `,
+        });
+      } else {
+        console.warn("⚠️ SMTP not configured. Email not sent, but message saved to database.");
+      }
+
+      res.json({ success: true, message: "Message envoyé avec succès" });
+    } catch (error: any) {
+      console.error("Contact form error:", error);
+      res.status(500).json({ error: "Erreur lors de l'envoi du message", details: error.message });
     }
   });
 

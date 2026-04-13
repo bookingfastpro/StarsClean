@@ -551,6 +551,14 @@ function MainApp() {
       setAdminFormData({ ...adminFormData, images: images.join('\n') });
     };
 
+    const setAsFeatured = (index: number) => {
+      const images = adminFormData.images.split('\n').filter(s => s.trim());
+      if (index === 0) return;
+      const selected = images.splice(index, 1)[0];
+      images.unshift(selected);
+      setAdminFormData({ ...adminFormData, images: images.join('\n') });
+    };
+
     const openLibrary = async () => {
       setIsLibraryOpen(true);
       setIsLoadingLibrary(true);
@@ -612,14 +620,30 @@ function MainApp() {
                 <div className="grid grid-cols-4 gap-2 mb-2">
                   {adminFormData.images.split('\n').filter(s => s.trim()).map((img, idx) => (
                     <div key={idx} className="relative group aspect-square">
-                      <img src={img} className="w-full h-full object-cover rounded-lg border border-slate-200" alt="" referrerPolicy="no-referrer" />
-                      <button 
-                        type="button" 
-                        onClick={() => removeImage(idx)}
-                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X size={12} />
-                      </button>
+                      <img src={img} className={`w-full h-full object-cover rounded-lg border ${idx === 0 ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-200'}`} alt="" referrerPolicy="no-referrer" />
+                      <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          type="button" 
+                          onClick={() => setAsFeatured(idx)}
+                          className={`p-1 rounded-full shadow-md transition-colors ${idx === 0 ? 'bg-blue-600 text-white' : 'bg-white text-slate-400 hover:text-blue-600'}`}
+                          title={idx === 0 ? "Image en vedette" : "Mettre en vedette"}
+                        >
+                          <Star size={12} fill={idx === 0 ? "currentColor" : "none"} />
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={() => removeImage(idx)}
+                          className="bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                          title="Supprimer"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                      {idx === 0 && (
+                        <div className="absolute bottom-1 left-1 bg-blue-600 text-[8px] text-white font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
+                          Vedette
+                        </div>
+                      )}
                     </div>
                   ))}
                   <label className={`aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
@@ -997,10 +1021,34 @@ function MainApp() {
           <div><p className="font-bold mb-2 text-slate-900">Téléphone</p><p className="text-blue-600 font-bold">+33 (0)6 42 65 85 98</p></div>
           <div><p className="font-bold mb-2 text-slate-900">Email</p><p className="text-blue-600 font-bold text-xs">conciergerie.prestige2a@gmail.com</p></div>
         </div>
-        <form className="space-y-6" onSubmit={e => {e.preventDefault(); alert('Message envoyé !');}}>
-          <input className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Nom complet" required />
-          <input className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="email" placeholder="Email" required />
-          <textarea className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" rows={5} placeholder="Votre message..." required></textarea>
+        <form className="space-y-6" onSubmit={async (e) => {
+          e.preventDefault();
+          const form = e.currentTarget;
+          const formData = new FormData(form);
+          const data = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            message: formData.get('message'),
+          };
+
+          try {
+            const response = await fetch('/api/contact', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            });
+
+            if (!response.ok) throw new Error('Failed to send message');
+            alert('Message envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.');
+            form.reset();
+          } catch (error) {
+            console.error("Contact error:", error);
+            alert("Erreur lors de l'envoi du message. Veuillez réessayer par téléphone.");
+          }
+        }}>
+          <input name="name" className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Nom complet" required />
+          <input name="email" className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="email" placeholder="Email" required />
+          <textarea name="message" className="w-full p-4 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" rows={5} placeholder="Votre message..." required></textarea>
           <Button className="w-full">Envoyer le message</Button>
         </form>
       </GlassContainer>
