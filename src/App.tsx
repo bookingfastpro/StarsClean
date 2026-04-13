@@ -13,9 +13,30 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 
 // --- AVIS GOOGLE ---
 const GOOGLE_REVIEWS: Review[] = [
-  { id: 1, author: "Sophie M.", date: "Il y a 2 semaines", rating: 5, text: "Superbe expérience avec Star's Clean ! La villa était dans un état impeccable à notre arrivée. L'équipe est aux petits soins.", avatar: "https://ui-avatars.com/api/?name=Sophie+M&background=0D8ABC&color=fff" },
-  { id: 2, author: "Jean-Marc L.", date: "Il y a 1 mois", rating: 5, text: "Je confie la gestion de ma location saisonnière à Star's Clean depuis un an. C'est une tranquillité d'esprit totale.", avatar: "https://ui-avatars.com/api/?name=Jean-Marc+L&background=1D4ED8&color=fff" },
-  { id: 3, author: "Claire D.", date: "Il y a 2 mois", rating: 5, text: "Nous avons fait appel à eux pour l'organisation de notre séjour : location de bateau, réservation de restaurants. Parfait !", avatar: "https://ui-avatars.com/api/?name=Claire+D&background=4338CA&color=fff" }
+  { 
+    id: 1, 
+    author: "AMELIE AMORE", 
+    date: "Il y a 3 mois", 
+    rating: 5, 
+    text: "Une très belle expérience avec Stars Clean! Dès notre arrivée en Corse-du-Sud, on est pris en charge par une équipe bienveillante, disponible et efficace. Tout est pensé pour que le séjour commence immédiatement, sans contraintes : on pose les valises et on profite pleinement. Le logement est impeccable et les services proposés parfaitement adaptés à notre séjour. Un vrai bonheur ! Pour des vacances sereines je vous recommande à 100%", 
+    avatar: "https://ui-avatars.com/api/?name=Amelie+Amore&background=0D8ABC&color=fff" 
+  },
+  { 
+    id: 2, 
+    author: "Léa", 
+    date: "Il y a un an", 
+    rating: 5, 
+    text: "L’équipe de Star’s clean est très professionnelle et à l’écoute. Elle saura parfaitement comment rendre vos vacances agréables grâce a son large choix de biens proposés à la location, à l’organisation de votre séjour et la location de véhicule qu’elle propose également. Je recommande +++", 
+    avatar: "https://ui-avatars.com/api/?name=Lea&background=1D4ED8&color=fff" 
+  },
+  { 
+    id: 3, 
+    author: "Celine Frechou", 
+    date: "Il y a un an", 
+    rating: 5, 
+    text: "Cela fait 3 ans que j’ai confié mon bien à la conciergerie stars clean et j’en suis ravie. Les revenus augmentent d’années en années, la conciergerie est sans cesse en train de se développer et c’est ce qui me permet d’avoir un calendrier complet je les remercie pour leur professionnalisme.", 
+    avatar: "https://ui-avatars.com/api/?name=Celine+Frechou&background=4338CA&color=fff" 
+  }
 ];
 
 // --- COMPOSANTS RÉUTILISABLES ---
@@ -374,7 +395,7 @@ function MainApp() {
           </div>
         </div>
 
-        <div className="mt-12"><a href="https://share.google/pYtB9A5Wx0rAZWp1c" target="_blank" className="inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-full font-bold hover:shadow-md transition-all"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" className="w-5" alt="" referrerPolicy="no-referrer" /> Voir les 48 avis Google</a></div>
+        <div className="mt-12"><a href="https://share.google/pYtB9A5Wx0rAZWp1c" target="_blank" className="inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-full font-bold hover:shadow-md transition-all"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" className="w-5" alt="" referrerPolicy="no-referrer" /> Voir les 4 avis Google</a></div>
       </section>
     </div>
   );
