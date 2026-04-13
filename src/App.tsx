@@ -93,6 +93,7 @@ function MainApp() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
   const reviewSliderRef = useRef<HTMLDivElement>(null);
 
@@ -166,6 +167,7 @@ function MainApp() {
     setSelectedProperty(property);
     setCurrentImageIndex(0);
     setIsMobileMenuOpen(false);
+    setIsDescExpanded(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -471,7 +473,26 @@ function MainApp() {
               <div className="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl border border-slate-100"><Bath size={24} className="text-cyan-500 mb-2"/><span className="font-bold text-slate-900">{p.bathrooms} Sdb.</span></div>
               {p.pmr && <div className="flex flex-col items-center justify-center bg-emerald-50 p-4 rounded-2xl border border-emerald-100"><Accessibility size={24} className="text-emerald-500 mb-2"/><span className="font-bold text-emerald-900">PMR</span></div>}
             </div>
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm mb-8 flex-grow"><h2 className="text-xl font-bold mb-4 text-slate-900">À propos de ce logement</h2><p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">{p.desc}</p></div>
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm mb-8 flex-grow relative overflow-hidden">
+              <h2 className="text-xl font-bold mb-4 text-slate-900">À propos de ce logement</h2>
+              <div className={`relative transition-all duration-500 ${!isDescExpanded ? 'max-h-[22.75rem] overflow-hidden' : 'max-h-[5000px]'}`}>
+                <p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">
+                  {p.desc}
+                </p>
+                {!isDescExpanded && p.desc.split('\n').length > 13 && (
+                  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                )}
+              </div>
+              {p.desc.split('\n').length > 13 && (
+                <button 
+                  onClick={() => setIsDescExpanded(!isDescExpanded)} 
+                  className="mt-4 text-blue-600 font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"
+                >
+                  {isDescExpanded ? 'Voir moins' : 'Voir plus'}
+                  <ChevronDown size={18} className={`transition-transform duration-300 ${isDescExpanded ? 'rotate-180' : ''}`} />
+                </button>
+              )}
+            </div>
             <Button className="w-full py-5" onClick={() => setIsBookingOpen(true)}>Demander une réservation <ArrowRight className="ml-2" size={20}/></Button>
           </div>
         </div>
