@@ -37,7 +37,7 @@ const Button = ({ children, variant = 'primary', className = '', ...props }: any
 const ElegantLogo = ({ isDark = false }) => (
   <div className="flex items-center gap-4">
     <img 
-      src="https://media.discordapp.net/attachments/1034881615635173376/1485017071333937233/logo-en-cours-stars-clean-conciergerie-V5-blanc.png?ex=69c24fac&is=69c0fe2c&hm=1c06a6a31ea7c2c8cc8ce376536be09d08fec37ac9256ad15781180dde679fee&=&format=webp&quality=lossless" 
+      src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/logo-en-cours-stars-clean-conciergerie-V5-blanc.png" 
       alt="Logo Star's Clean" 
       className={`h-10 md:h-12 object-contain ${!isDark ? 'brightness-0 opacity-90' : ''}`}
       referrerPolicy="no-referrer"
