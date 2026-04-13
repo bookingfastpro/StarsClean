@@ -1119,7 +1119,7 @@ function MainApp() {
           <div className="md:col-span-5">
             <div className="mb-8 cursor-pointer" onClick={() => navigate('home')}><ElegantLogo isDark={true} /></div>
             <p className="text-slate-400 max-w-sm mb-8">Professionnels spécialisés dans la gestion locative et la conciergerie dans l'extrême Sud de la Corse.</p>
-            <a href="#" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-blue-600 border border-white/10 transition-all" aria-label="Suivez-nous sur Instagram"><Instagram size={22} /></a>
+            <a href="https://www.instagram.com/conciergerie_prestige2a/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-blue-600 border border-white/10 transition-all" aria-label="Suivez-nous sur Instagram"><Instagram size={22} /></a>
           </div>
           <div className="md:col-span-3">
             <h2 className="font-black text-white mb-6 uppercase text-xs tracking-widest">Navigation</h2>
