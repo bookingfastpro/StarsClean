@@ -234,6 +234,7 @@ function MainApp() {
             <div className="flex items-center gap-1"><Users size={16} className="text-blue-500" /><span>{property.capacity}</span></div>
             <div className="flex items-center gap-1"><BedDouble size={16} className="text-indigo-500" /><span>{property.beds} Ch.</span></div>
             <div className="flex items-center gap-1"><Bath size={16} className="text-cyan-500" /><span>{property.bathrooms} Sdb.</span></div>
+            {property.pmr && <div className="flex items-center gap-1" title="Accès PMR"><Accessibility size={16} className="text-emerald-500" /><span>PMR</span></div>}
           </div>
           <p className={`text-slate-600 text-sm mb-6 ${isList ? 'line-clamp-4' : 'line-clamp-2'}`}>{property.desc}</p>
           <div className="mt-auto pt-4 border-t border-slate-200/60 flex items-center justify-between text-blue-600 font-semibold group-hover:text-indigo-600 shrink-0">
@@ -431,10 +432,11 @@ function MainApp() {
             <span className="text-blue-600 font-bold uppercase tracking-widest text-xs mb-4">{p.category}</span>
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">{p.title}</h1>
             <p className="text-slate-500 flex items-center gap-2 mb-8 text-lg"><MapPin size={22} className="text-blue-600" /> {p.location}</p>
-            <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className={`grid ${p.pmr ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'} gap-4 mb-8`}>
               <div className="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl border border-slate-100"><Users size={24} className="text-blue-500 mb-2"/><span className="font-bold text-slate-900">{p.capacity}</span></div>
               <div className="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl border border-slate-100"><BedDouble size={24} className="text-indigo-500 mb-2"/><span className="font-bold text-slate-900">{p.beds} Ch.</span></div>
               <div className="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-2xl border border-slate-100"><Bath size={24} className="text-cyan-500 mb-2"/><span className="font-bold text-slate-900">{p.bathrooms} Sdb.</span></div>
+              {p.pmr && <div className="flex flex-col items-center justify-center bg-emerald-50 p-4 rounded-2xl border border-emerald-100"><Accessibility size={24} className="text-emerald-500 mb-2"/><span className="font-bold text-emerald-900">PMR</span></div>}
             </div>
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm mb-8 flex-grow"><h2 className="text-xl font-bold mb-4 text-slate-900">À propos de ce logement</h2><p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">{p.desc}</p></div>
             <Button className="w-full py-5" onClick={() => setIsBookingOpen(true)}>Demander une réservation <ArrowRight className="ml-2" size={20}/></Button>
