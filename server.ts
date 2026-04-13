@@ -23,6 +23,12 @@ const supabaseUrl = process.env.SUPABASE_URL || "";
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
+if (!supabase) {
+  console.warn("⚠️ Supabase is NOT initialized. Check SUPABASE_URL and SUPABASE_ANON_KEY environment variables.");
+} else {
+  console.log("✅ Supabase initialized successfully.");
+}
+
 // Multer setup for memory storage
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -64,16 +70,53 @@ async function startServer() {
           upsert: true,
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase Storage Error:", error);
+        return res.status(500).json({ error: error.message, details: error });
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from("property-images")
         .getPublicUrl(filePath);
 
       res.json({ url: publicUrl });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Upload error:", error);
-      res.status(500).json({ error: "Failed to upload image" });
+      res.status(500).json({ 
+        error: "Failed to upload image", 
+        message: error?.message || String(error) 
+      });
+    }
+  });
+
+  // List images endpoint
+  app.get("/api/storage/images", async (req, res) => {
+    try {
+      if (!supabase) {
+        return res.status(500).json({ error: "Supabase not configured" });
+      }
+
+      const { data, error } = await supabase.storage
+        .from("property-images")
+        .list("properties", {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: "created_at", order: "desc" },
+        });
+
+      if (error) throw error;
+
+      const imageUrls = data.map((file) => {
+        const { data: { publicUrl } } = supabase.storage
+          .from("property-images")
+          .getPublicUrl(`properties/${file.name}`);
+        return publicUrl;
+      });
+
+      res.json(imageUrls);
+    } catch (error: any) {
+      console.error("List images error:", error);
+      res.status(500).json({ error: "Failed to list images", message: error?.message });
     }
   });
 

@@ -95,6 +95,9 @@ function MainApp() {
   });
   const [isAdminSubmitting, setIsAdminSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [libraryImages, setLibraryImages] = useState<string[]>([]);
+  const [isLoadingLibrary, setIsLoadingLibrary] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Initialisation Auth (Session locale)
@@ -548,6 +551,30 @@ function MainApp() {
       setAdminFormData({ ...adminFormData, images: images.join('\n') });
     };
 
+    const openLibrary = async () => {
+      setIsLibraryOpen(true);
+      setIsLoadingLibrary(true);
+      try {
+        const response = await fetch('/api/storage/images');
+        if (!response.ok) throw new Error('Failed to fetch library');
+        const data = await response.json();
+        setLibraryImages(data);
+      } catch (error) {
+        console.error("Library error:", error);
+      } finally {
+        setIsLoadingLibrary(false);
+      }
+    };
+
+    const toggleLibraryImage = (url: string) => {
+      const currentImages = adminFormData.images.split('\n').filter(s => s.trim());
+      if (currentImages.includes(url)) {
+        setAdminFormData({ ...adminFormData, images: currentImages.filter(img => img !== url).join('\n') });
+      } else {
+        setAdminFormData({ ...adminFormData, images: [...currentImages, url].join('\n') });
+      }
+    };
+
     return (
       <div className="pt-32 pb-20 px-4 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-4">
@@ -572,7 +599,16 @@ function MainApp() {
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 block">Images du bien</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-bold text-slate-700 block">Images du bien</label>
+                  <button 
+                    type="button" 
+                    onClick={openLibrary}
+                    className="text-[10px] font-bold text-blue-600 uppercase tracking-wider hover:underline"
+                  >
+                    Bibliothèque
+                  </button>
+                </div>
                 <div className="grid grid-cols-4 gap-2 mb-2">
                   {adminFormData.images.split('\n').filter(s => s.trim()).map((img, idx) => (
                     <div key={idx} className="relative group aspect-square">
@@ -674,6 +710,63 @@ function MainApp() {
             ))}
           </div>
         </div>
+
+        {/* Modal Bibliothèque d'images */}
+        {isLibraryOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+            <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">Bibliothèque d'images</h3>
+                  <p className="text-sm text-slate-500">Sélectionnez les images déjà enregistrées sur Supabase</p>
+                </div>
+                <button onClick={() => setIsLibraryOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                  <X size={24} />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-6">
+                {isLoadingLibrary ? (
+                  <div className="flex flex-col items-center justify-center py-20 gap-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <p className="text-slate-500 font-medium">Chargement de la bibliothèque...</p>
+                  </div>
+                ) : libraryImages.length === 0 ? (
+                  <div className="text-center py-20">
+                    <ImageIcon size={48} className="mx-auto text-slate-300 mb-4" />
+                    <p className="text-slate-500">Aucune image trouvée dans la bibliothèque.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {libraryImages.map((url, idx) => {
+                      const isSelected = adminFormData.images.split('\n').filter(s => s.trim()).includes(url);
+                      return (
+                        <div 
+                          key={idx} 
+                          onClick={() => toggleLibraryImage(url)}
+                          className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer border-4 transition-all ${isSelected ? 'border-blue-500 ring-4 ring-blue-500/20' : 'border-transparent hover:border-slate-200'}`}
+                        >
+                          <img src={url} className="w-full h-full object-cover" alt="" referrerPolicy="no-referrer" />
+                          {isSelected && (
+                            <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
+                              <div className="bg-blue-500 text-white rounded-full p-1 shadow-lg">
+                                <CheckCircle size={20} />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              
+              <div className="p-6 border-t border-slate-100 flex justify-end">
+                <Button onClick={() => setIsLibraryOpen(false)} className="px-8">Terminer</Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
