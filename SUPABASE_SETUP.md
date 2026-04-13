@@ -31,7 +31,7 @@ create table properties (
   id uuid default gen_random_uuid() primary key,
   created_at timestamp with time zone default now(),
   title text not null,
-  category text check (category in ('studios', 'minivillas', 'villas')),
+  category text check (category in ('studios', 'minivillas', 'villas', 'appartements')),
   location text not null,
   capacity text,
   beds numeric default 0,

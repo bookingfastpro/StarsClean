@@ -44,6 +44,17 @@ const GlassContainer = ({ children, className = "", onClick }: { children: React
   <div onClick={onClick} className={`bg-white/70 backdrop-blur-md border border-slate-200/60 shadow-lg rounded-2xl ${className}`}>{children}</div>
 );
 
+const getCategoryLabel = (cat: Category) => {
+  switch (cat) {
+    case 'studios': return 'Studios / T2';
+    case 'minivillas': return 'Mini Villas';
+    case 'villas': return 'Villas';
+    case 'appartements': return 'Appartements';
+    case 'all': return 'Tous';
+    default: return cat;
+  }
+};
+
 const Button = ({ children, variant = 'primary', className = '', ...props }: any) => {
   const baseStyle = "px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-base md:text-lg shadow-xl";
   const variants: any = {
@@ -205,6 +216,7 @@ function MainApp() {
                 <button onClick={() => { setActiveCategory('studios'); navigate('properties'); }} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors">Studios / T2</button>
                 <button onClick={() => { setActiveCategory('minivillas'); navigate('properties'); }} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors">Mini Villas</button>
                 <button onClick={() => { setActiveCategory('villas'); navigate('properties'); }} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors">Villas</button>
+                <button onClick={() => { setActiveCategory('appartements'); navigate('properties'); }} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors">Appartements</button>
               </GlassContainer>
             </div>
           </div>
@@ -245,7 +257,7 @@ function MainApp() {
       >
         <div className={`relative overflow-hidden shrink-0 ${isList ? 'h-72 md:h-full md:w-5/12' : 'h-64'}`}>
           <img src={coverImage} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={property.title} referrerPolicy="no-referrer" />
-          <div className="absolute top-4 left-4"><span className="px-3 py-1 bg-white/90 backdrop-blur-md text-slate-900 text-xs font-bold uppercase rounded-full shadow-sm">{property.category}</span></div>
+          <div className="absolute top-4 left-4"><span className="px-3 py-1 bg-white/90 backdrop-blur-md text-slate-900 text-xs font-bold uppercase rounded-full shadow-sm">{getCategoryLabel(property.category)}</span></div>
           {property.images?.length > 1 && <div className="absolute bottom-4 right-4 px-2 py-1 bg-slate-900/60 text-white text-xs rounded-md flex items-center gap-1"><Camera size={12} />{property.images.length}</div>}
         </div>
         <div className={`p-6 flex flex-col flex-grow overflow-hidden ${isList ? 'md:p-8 md:w-7/12' : ''}`}>
@@ -410,13 +422,13 @@ function MainApp() {
         </div>
         
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {['all', 'studios', 'minivillas', 'villas'].map((cat) => (
+          {['all', 'studios', 'minivillas', 'villas', 'appartements'].map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat as Category)}
               className={`px-6 py-2 rounded-full font-bold transition-all ${activeCategory === cat ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
             >
-              {cat === 'all' ? 'Tous' : cat === 'studios' ? 'Studios / T2' : cat === 'minivillas' ? 'Mini Villas' : 'Villas'}
+              {getCategoryLabel(cat as Category)}
             </button>
           ))}
         </div>
@@ -450,7 +462,7 @@ function MainApp() {
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">{images.map((img, i) => <img key={i} src={img} onClick={() => setCurrentImageIndex(i)} className={`w-24 h-20 object-cover rounded-xl cursor-pointer border-2 ${i === currentImageIndex ? 'border-blue-600 scale-105' : 'border-transparent opacity-70'}`} alt="" referrerPolicy="no-referrer" />)}</div>
           </div>
           <div className="flex flex-col">
-            <span className="text-blue-600 font-bold uppercase tracking-widest text-xs mb-4">{p.category}</span>
+            <span className="text-blue-600 font-bold uppercase tracking-widest text-xs mb-4">{getCategoryLabel(p.category)}</span>
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">{p.title}</h1>
             <p className="text-slate-500 flex items-center gap-2 mb-8 text-lg"><MapPin size={22} className="text-blue-600" /> {p.location}</p>
             <div className={`grid ${p.pmr ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'} gap-4 mb-8`}>
@@ -529,7 +541,7 @@ function MainApp() {
         setProperties(updatedData);
 
         setEditingId(null);
-        setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true });
+        setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true });
       } catch (error) {
         console.error("Error saving property:", error);
         alert("Erreur lors de la sauvegarde du bien.");
@@ -621,6 +633,7 @@ function MainApp() {
                 <option value="studios">Studios / T2</option>
                 <option value="minivillas">Mini Villas</option>
                 <option value="villas">Villas</option>
+                <option value="appartements">Appartements</option>
               </select>
               <input className="w-full p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Localisation" value={adminFormData.location} onChange={e => setAdminFormData({...adminFormData, location: e.target.value})} required />
               <div className="grid grid-cols-3 gap-3">
@@ -708,7 +721,7 @@ function MainApp() {
                 </div>
               </div>
               <Button className="w-full py-4" disabled={isAdminSubmitting}>{isAdminSubmitting ? 'Envoi...' : (editingId ? 'Mettre à jour' : 'Sauvegarder')}</Button>
-              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios', location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
+              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
             </form>
           </div>
           <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">

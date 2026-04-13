@@ -1,4 +1,4 @@
-export type Category = 'studios' | 'minivillas' | 'villas' | 'all';
+export type Category = 'studios' | 'minivillas' | 'villas' | 'appartements' | 'all';
 
 export interface Property {
   id?: string;
