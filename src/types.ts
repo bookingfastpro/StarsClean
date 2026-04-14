@@ -23,3 +23,12 @@ export interface Review {
   text: string;
   avatar: string;
 }
+
+export interface Service {
+  id: string;
+  title: string;
+  desc: string;
+  longDesc: string;
+  icon: string; // Icon name from lucide-react
+  images: string[];
+}
