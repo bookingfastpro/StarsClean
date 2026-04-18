@@ -630,15 +630,15 @@ function MainApp() {
             </div>
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm mb-8 flex-grow relative overflow-hidden">
               <h2 className="text-xl font-bold mb-4 text-slate-900">À propos de ce logement</h2>
-              <div className={`relative transition-all duration-500 ${!isDescExpanded ? 'max-h-[22.75rem] overflow-hidden' : 'max-h-[5000px]'}`}>
+              <div className={`relative transition-all duration-500 ${!isDescExpanded ? 'max-h-80 overflow-hidden' : 'max-h-[5000px]'}`}>
                 <p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">
                   {p.desc}
                 </p>
-                {!isDescExpanded && p.desc.split('\n').length > 13 && (
+                {!isDescExpanded && (p.desc.length > 400 || p.desc.split('\n').length > 8) && (
                   <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                 )}
               </div>
-              {p.desc.split('\n').length > 13 && (
+              {(p.desc.length > 400 || p.desc.split('\n').length > 8) && (
                 <button 
                   onClick={() => setIsDescExpanded(!isDescExpanded)} 
                   className="mt-4 text-blue-600 font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"

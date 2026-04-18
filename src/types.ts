@@ -13,6 +13,7 @@ export interface Property {
   images: string[];
   features: string[];
   isVisible?: boolean;
+  bookingAction?: 'iframe' | 'contact';
 }
 
 export interface Review {
