@@ -37,11 +37,16 @@ create table properties (
   beds numeric default 0,
   bathrooms numeric default 0,
   pmr boolean default false,
+  "bookingAction" text default 'iframe',
   "desc" text,
   images text[] default '{}',
   features text[] default '{}',
   "isVisible" boolean default true
 );
+
+-- Note pour les utilisateurs existants :
+-- Si vous avez déjà créé la table, exécutez ceci pour ajouter le nouveau champ :
+-- ALTER TABLE properties ADD COLUMN "bookingAction" text DEFAULT 'iframe';
 
 -- Création de la table des demandes de contact
 create table contact_requests (

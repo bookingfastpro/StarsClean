@@ -198,12 +198,21 @@ async function startServer() {
   app.post("/api/properties", async (req, res) => {
     try {
       if (supabase) {
+        // Remove id if present to let Supabase generate it or use the one provided
+        const { id, ...saveData } = req.body;
         const { data, error } = await supabase
           .from("properties")
-          .insert([req.body])
+          .insert([saveData])
           .select();
         
-        if (error) throw error;
+        if (error) {
+          console.error("Supabase Insert Error Detail:", JSON.stringify(error, null, 2));
+          return res.status(500).json({ 
+            message: error.message || "Failed to insert property", 
+            error: error,
+            details: error 
+          });
+        }
         return res.status(201).json(data[0]);
       }
 
@@ -224,13 +233,23 @@ async function startServer() {
     try {
       const { id } = req.params;
       if (supabase) {
+        // Filter out fields that might cause issues if column doesn't exist
+        const { id: bodyId, created_at, ...updateData } = req.body;
+        
         const { data, error } = await supabase
           .from("properties")
-          .update(req.body)
+          .update(updateData)
           .eq("id", id)
           .select();
         
-        if (error) throw error;
+        if (error) {
+          console.error("Supabase Update Error Detail:", JSON.stringify(error, null, 2));
+          return res.status(500).json({ 
+            message: error.message || "Failed to update property", 
+            error: error,
+            details: error 
+          });
+        }
         if (!data || data.length === 0) return res.status(404).json({ error: "Property not found" });
         return res.json(data[0]);
       }

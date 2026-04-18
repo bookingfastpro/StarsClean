@@ -42,7 +42,7 @@ const GOOGLE_REVIEWS: Review[] = [
 const SERVICES: Service[] = [
   {
     id: "car-rental",
-    title: "Location de voitures",
+    title: "location de voiture",
     desc: "Une large gamme de véhicules pour parcourir les routes corses en toute liberté.",
     longDesc: "La voiture familiale qui se plie à vos envies. Enfin de l'espace pour tous vos passagers ! Le véhicule Jogger se décline en plusieurs versions modulables pour accueillir de 2 à 7 passagers sans concession pour le confort et l'habitabilité.\n\nÀ l'intérieur comme à l'extérieur, Jogger vous offre la polyvalence d'un break et le confort d'un SUV. Le tarif de location commence à partir de 50€/j * selon la période.\n\nLe véhicule est disponible au départ et au retour de l'aéroport de Figari. Il est également possible de le récupérer ou de le laisser à l'aéroport de Bastia ou d'Ajaccio avec un supplément de 100€.",
     icon: "Car",
@@ -54,7 +54,7 @@ const SERVICES: Service[] = [
   },
   {
     id: "boat-rental",
-    title: "Location de bateau",
+    title: "location de bateau",
     desc: "Explorez les criques inaccessibles et profitez d'une journée en mer exceptionnelle.",
     longDesc: "Préparez-vous à vivre une soirée magique en mer avec notre prestataire BBQ Boat ! Naviguez et grillez en toute convivialité.\n\nL’expérience BBQ Boat en Corse vous propose la location d’un bateau sans permis pouvant accueillir jusqu’à 9 personnes. Naviguez en toute liberté tout en savourant de délicieuses grillades grâce à un barbecue XXL intégré.\n\nLe forfait de location comprend le carburant, la vaisselle, une enceinte Bluetooth et un éclairage pour les sorties nocturnes. Des options avec capitaine ainsi que des équipements de cuisson Weber sont également disponibles.\n\nLaissez-vous séduire par une expérience unique à bord du BBQ Boat, idéal pour partager des moments inoubliables entre amis ou en famille. Équipé d’un barbecue à gaz ou d’une vasque à boissons XXL, ce bateau vous permet de profiter de petits-déjeuners, déjeuners, dîners ou apéritifs dans les magnifiques criques sauvages du Valincu.",
     icon: "Ship",
@@ -66,7 +66,7 @@ const SERVICES: Service[] = [
   },
   {
     id: "wine-tasting",
-    title: "Visite des caves",
+    title: "visite des caves",
     desc: "Dégustation des meilleurs crus locaux et découverte du terroir corse.",
     longDesc: "Profitez d’une expérience unique de visite du cave avec Star's Clean Conciergerie en Corse-du-Sud. Star's Clean Conciergerie dans l'extrême Sud de la Corse vous propose une expérience unique de visite des caves et de dégustation de vins.\n\nQue vous soyez un amateur de vin passionné ou simplement curieux de découvrir les secrets de la vinification, notre visite vous promet une expérience inoubliable.\n\nPour plus d’informations, contactez-nous via le formulaire de contact. Nous sommes toujours disponibles pour répondre à toutes vos demandes dans les plus brefs délais.",
     icon: "Wine",
@@ -76,7 +76,7 @@ const SERVICES: Service[] = [
   },
   {
     id: "breakfast",
-    title: "Petit déjeuner",
+    title: "petit déjeuner",
     desc: "Livraison de viennoiseries fraîches et produits locaux directement à votre porte.",
     longDesc: "Livraison de petit déjeuner\nExplorez notre service de livraison de petit-déjeuner, alliant saveurs exquises et praticité.\n\nSavourez des délices matinaux, avec une sélection variée de produits frais.\n\nNotre livraison rapide vous assure un début de journée délicieux, sans tracas. Commandez dès maintenant pour une expérience gourmande à votre porte.",
     icon: "Coffee",
@@ -192,7 +192,7 @@ function MainApp() {
 
   // État du formulaire Admin
   const [adminFormData, setAdminFormData] = useState({
-    title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true
+    title: '', category: 'studios' as Category, location: '', capacity: '', beds: 1, bathrooms: 1, pmr: false, desc: '', images: '', isVisible: true, bookingAction: 'iframe' as 'iframe' | 'contact'
   });
   const [isAdminSubmitting, setIsAdminSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -319,7 +319,7 @@ function MainApp() {
                   <button 
                     key={s.id} 
                     onClick={() => navigate('service-detail', s)} 
-                    className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors text-xs font-semibold"
+                    className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors text-xs font-semibold capitalize"
                   >
                     {s.title}
                   </button>
@@ -350,7 +350,7 @@ function MainApp() {
                   <button 
                     key={s.id} 
                     onClick={() => navigate('service-detail', s)} 
-                    className="text-left text-sm p-2 hover:bg-slate-50 rounded-lg text-slate-600"
+                    className="text-left text-sm p-2 hover:bg-slate-50 rounded-lg text-slate-600 capitalize"
                   >
                     • {s.title}
                   </button>
@@ -634,11 +634,11 @@ function MainApp() {
                 <p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">
                   {p.desc}
                 </p>
-                {!isDescExpanded && (p.desc.length > 400 || p.desc.split('\n').length > 8) && (
+                {!isDescExpanded && (p.desc.length > 300 || p.desc.split('\n').length > 6) && (
                   <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                 )}
               </div>
-              {(p.desc.length > 400 || p.desc.split('\n').length > 8) && (
+              {(p.desc.length > 300 || p.desc.split('\n').length > 6) && (
                 <button 
                   onClick={() => setIsDescExpanded(!isDescExpanded)} 
                   className="mt-4 text-blue-600 font-bold flex items-center gap-1 hover:text-blue-700 transition-colors"
@@ -648,7 +648,10 @@ function MainApp() {
                 </button>
               )}
             </div>
-            <Button className="w-full py-5" onClick={() => setIsBookingOpen(true)}>Demander une réservation <ArrowRight className="ml-2" size={20}/></Button>
+            <Button className="w-full py-5" onClick={() => p.bookingAction === 'contact' ? navigate('contact') : setIsBookingOpen(true)}>
+              {p.bookingAction === 'contact' ? 'Contacter pour réserver' : 'Demander une réservation'}
+              <ArrowRight className="ml-2" size={20}/>
+            </Button>
           </div>
         </div>
       </div>
@@ -709,7 +712,10 @@ function MainApp() {
           body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw new Error('Failed to save property');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to save property');
+        }
         
         // Refresh properties list
         const updatedResponse = await fetch('/api/properties');
@@ -717,10 +723,10 @@ function MainApp() {
         setProperties(updatedData);
 
         setEditingId(null);
-        setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true });
-      } catch (error) {
+        setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true, bookingAction: 'iframe' });
+      } catch (error: any) {
         console.error("Error saving property:", error);
-        alert("Erreur lors de la sauvegarde du bien.");
+        alert(error.message || "Erreur lors de la sauvegarde du bien.");
       } finally {
         setIsAdminSubmitting(false);
       }
@@ -890,14 +896,25 @@ function MainApp() {
                     type="checkbox" 
                     id="pmr" 
                     checked={adminFormData.pmr} 
-                    onChange={e => setAdminFormData({...adminFormData, pmr: e.target.checked})}
+                    onChange={(e: any) => setAdminFormData({...adminFormData, pmr: e.target.checked})}
                     className="w-5 h-5 accent-indigo-600"
                   />
                   <label htmlFor="pmr" className="text-sm font-medium text-slate-700 cursor-pointer">Accès PMR / Handicapé</label>
                 </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Action du bouton réservation</label>
+                  <select 
+                    className="w-full p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600 text-sm"
+                    value={adminFormData.bookingAction || 'iframe'}
+                    onChange={(e: any) => setAdminFormData({...adminFormData, bookingAction: e.target.value as 'iframe' | 'contact'})}
+                  >
+                    <option value="iframe">Ouvrir Réservation (Iframe)</option>
+                    <option value="contact">Redirect Contact</option>
+                  </select>
+                </div>
               </div>
               <Button className="w-full py-4" disabled={isAdminSubmitting}>{isAdminSubmitting ? 'Envoi...' : (editingId ? 'Mettre à jour' : 'Sauvegarder')}</Button>
-              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
+              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true, bookingAction: 'iframe' }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
             </form>
           </div>
           <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1330,7 +1347,7 @@ function MainApp() {
                 <div className="mb-6 p-4 bg-slate-50 w-fit rounded-2xl group-hover:bg-blue-50 transition-colors">
                   {getServiceIcon(service.icon, 32, "text-blue-600")}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">{service.title}</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4 capitalize">{service.title}</h3>
                 <p className="text-slate-500 leading-relaxed">{service.desc}</p>
                 <div className="mt-6 flex items-center gap-2 text-blue-600 font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                   En savoir plus <ArrowRight size={16} />
@@ -1371,7 +1388,7 @@ function MainApp() {
             <div className="p-6 bg-blue-50 w-fit rounded-3xl text-blue-600">
               {getServiceIcon(s.icon, 48)}
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight">
+            <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight capitalize">
               {s.title}
             </h1>
 
@@ -1744,7 +1761,7 @@ function MainApp() {
           };
 
           try {
-            const response = await fetch('/api/contact', {
+            const response = await fetch('https://formspree.io/f/mykljwzz', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data),
