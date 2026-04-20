@@ -87,8 +87,8 @@ const SERVICES: Service[] = [
   {
     id: "massage",
     title: "Soin & Massage",
-    desc: "Un moment de détente absolue avec nos praticiens qualifiés à domicile.",
-    longDesc: "Soin et massage à domicile\nOffrez-vous une oasis de bien-être avec nos soins et massages à domicile. Nos praticiens qualifiés créent une expérience relaxante, directement chez vous. Libérez le stress, revitalisez votre corps et esprit.\n\nRéservez votre moment de détente dès maintenant pour une parenthèse de bien-être personnalisée, sans quitter votre cocon.\n\nDécouvrez les cartes de visites des prestataires dans votre livret d'Accueil.\n\nPour toute présentation des praticiens, merci de contacter la conciergerie.",
+    desc: "Un moment de détente absolue à domicile, à partir de 60€.",
+    longDesc: "Soin et massage à domicile\nOffrez-vous une oasis de bien-être avec nos soins et massages à domicile. Nos praticiens qualifiés créent une expérience relaxante, directement chez vous. Libérez le stress, revitalisez votre corps et esprit.\n\nRéservez votre moment de détente dès maintenant à partir de 60€ pour une parenthèse de bien-être personnalisée, sans quitter votre cocon.\n\nDécouvrez les cartes de visites des prestataires dans votre livret d'Accueil.\n\nPour toute présentation des praticiens, merci de contacter la conciergerie.",
     icon: "Heart",
     images: [
       "https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/massage.png"
@@ -1991,9 +1991,16 @@ function MainApp() {
                   <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl">
                     <div className="flex items-center gap-3 mb-6">
                       <Briefcase className="text-pink-400" />
-                      <h3 className="text-lg font-bold">Informations Pratiques</h3>
+                      <h3 className="text-lg font-bold">Tarifs & Informations</h3>
                     </div>
                     <div className="space-y-4">
+                      <div className="flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10 mb-2">
+                        <span className="text-slate-300 font-medium">Soin / Massage relaxant</span>
+                        <div className="text-right">
+                          <span className="block text-[10px] font-bold text-pink-400 uppercase tracking-widest">À partir de</span>
+                          <span className="text-2xl font-black text-white">60 €</span>
+                        </div>
+                      </div>
                       <div className="flex items-start gap-4 p-4 bg-white/5 rounded-2xl border border-white/10">
                         <div className="bg-pink-600/20 text-pink-400 p-2 rounded-lg shrink-0"><CheckCircle size={18}/></div>
                         <p className="text-sm text-slate-300">
