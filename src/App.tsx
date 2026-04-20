@@ -1101,7 +1101,7 @@ function MainApp() {
           <div className="relative">
             <div className="absolute -inset-4 bg-blue-100/50 rounded-[4rem] blur-2xl opacity-50" />
             <img 
-              src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/qui-sommes-nous-equipe-conciergerie-airbnb-paris.jpeg" 
+              src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/properties/1776702830928-iaob3fpycmb.jpg" 
               className="relative rounded-[3rem] shadow-2xl border-8 border-white object-cover aspect-[4/5] lg:aspect-auto" 
               alt="Expertise Conciergerie Star's Clean"
               referrerPolicy="no-referrer"
