@@ -71,7 +71,7 @@ const SERVICES: Service[] = [
     longDesc: "Profitez d’une expérience unique de visite du cave avec Star's Clean Conciergerie en Corse-du-Sud. Star's Clean Conciergerie dans l'extrême Sud de la Corse vous propose une expérience unique de visite des caves et de dégustation de vins.\n\nQue vous soyez un amateur de vin passionné ou simplement curieux de découvrir les secrets de la vinification, notre visite vous promet une expérience inoubliable.\n\nPour plus d’informations, contactez-nous via le formulaire de contact. Nous sommes toujours disponibles pour répondre à toutes vos demandes dans les plus brefs délais.",
     icon: "Wine",
     images: [
-      "https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/domaine.png"
+      "https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/properties/1776673200225-xipa0i7hix.png"
     ]
   },
   {
@@ -298,7 +298,7 @@ function MainApp() {
         </div>
         <div className="hidden lg:flex items-center gap-6 font-medium text-slate-700 text-sm">
           <button onClick={() => navigate('home')} className={`hover:text-blue-600 transition-colors ${route === 'home' ? 'text-blue-600 font-bold' : ''}`}>Accueil</button>
-          <button onClick={() => navigate('conciergerie')} className={`hover:text-blue-600 transition-colors ${route === 'conciergerie' ? 'text-blue-600 font-bold' : ''}`}>Conciergerie</button>
+          <button onClick={() => navigate('conciergerie')} className={`hover:text-blue-600 transition-colors ${route === 'conciergerie' ? 'text-blue-600 font-bold' : ''}`}>Propriétaires</button>
           <div className="relative group">
             <button onClick={() => navigate('properties')} className="flex items-center gap-1 hover:text-blue-600 font-medium transition-colors">Nos Biens <ChevronDown size={14}/></button>
             <div className="absolute top-full left-0 mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
@@ -340,7 +340,7 @@ function MainApp() {
         <div className="lg:hidden absolute top-[76px] left-4 right-4 animate-fade-in-down z-50">
           <GlassContainer className="flex flex-col p-4 gap-3 !bg-white/95 shadow-2xl">
             <button onClick={() => navigate('home')} className="text-left font-medium p-2 hover:bg-slate-100 rounded-lg">Accueil</button>
-            <button onClick={() => navigate('conciergerie')} className="text-left font-medium p-2 hover:bg-slate-100 rounded-lg">Conciergerie</button>
+            <button onClick={() => navigate('conciergerie')} className="text-left font-medium p-2 hover:bg-slate-100 rounded-lg">Propriétaires</button>
             <button onClick={() => navigate('properties')} className="text-left font-medium p-2 hover:bg-slate-100 rounded-lg">Nos Biens</button>
             <button onClick={() => navigate('sejours')} className="text-left font-medium p-2 hover:bg-slate-100 rounded-lg">Gestion séjours</button>
             <div className="flex flex-col gap-1">
@@ -723,7 +723,7 @@ function MainApp() {
         setProperties(updatedData);
 
         setEditingId(null);
-        setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true, bookingAction: 'iframe' });
+        setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: 0, bathrooms: 0, pmr: false, desc: '', images: '', isVisible: true, bookingAction: 'iframe' });
       } catch (error: any) {
         console.error("Error saving property:", error);
         alert(error.message || "Erreur lors de la sauvegarde du bien.");
@@ -820,8 +820,8 @@ function MainApp() {
               <input className="w-full p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Localisation" value={adminFormData.location} onChange={e => setAdminFormData({...adminFormData, location: e.target.value})} required />
               <div className="grid grid-cols-3 gap-3">
                 <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" placeholder="Capacité" value={adminFormData.capacity} onChange={e => setAdminFormData({...adminFormData, capacity: e.target.value})} required />
-                <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="number" placeholder="Ch." value={adminFormData.beds} onChange={e => setAdminFormData({...adminFormData, beds: e.target.value})} />
-                <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="number" placeholder="Sdb" value={adminFormData.bathrooms} onChange={e => setAdminFormData({...adminFormData, bathrooms: e.target.value})} />
+                <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="number" placeholder="Ch." value={adminFormData.beds} onChange={e => setAdminFormData({...adminFormData, beds: parseInt(e.target.value) || 0})} />
+                <input className="p-3 bg-slate-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-600" type="number" placeholder="Sdb" value={adminFormData.bathrooms} onChange={e => setAdminFormData({...adminFormData, bathrooms: parseInt(e.target.value) || 0})} />
               </div>
               
               <div className="space-y-2">
@@ -914,7 +914,7 @@ function MainApp() {
                 </div>
               </div>
               <Button className="w-full py-4" disabled={isAdminSubmitting}>{isAdminSubmitting ? 'Envoi...' : (editingId ? 'Mettre à jour' : 'Sauvegarder')}</Button>
-              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: '', bathrooms: '', pmr: false, desc: '', images: '', isVisible: true, bookingAction: 'iframe' }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
+              {editingId && <button type="button" onClick={() => { setEditingId(null); setAdminFormData({ title: '', category: 'studios' as Category, location: '', capacity: '', beds: 0, bathrooms: 0, pmr: false, desc: '', images: '', isVisible: true, bookingAction: 'iframe' }); }} className="w-full text-xs text-red-500 font-bold mt-2 uppercase tracking-widest">ANNULER</button>}
             </form>
           </div>
           <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -945,7 +945,18 @@ function MainApp() {
                   >
                     {p.isVisible === false ? <Lock size={18} /> : <CheckCircle size={18} />}
                   </button>
-                  <button onClick={() => { setEditingId(p.id!); setAdminFormData({ ...p, images: p.images?.join('\n') || '', beds: String(p.beds), bathrooms: String(p.bathrooms), isVisible: p.isVisible !== false }); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
+                  <button onClick={() => { 
+                    setEditingId(p.id!); 
+                    setAdminFormData({ 
+                      ...p, 
+                      images: p.images?.join('\n') || '', 
+                      beds: p.beds || 0, 
+                      bathrooms: p.bathrooms || 0,
+                      capacity: p.capacity || '',
+                      isVisible: p.isVisible !== false,
+                      bookingAction: p.bookingAction || 'iframe'
+                    }); 
+                  }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
                   <button onClick={async () => { 
                     if(confirm('Supprimer ce bien ?')) {
                       try {
@@ -1025,7 +1036,7 @@ function MainApp() {
   };
 
   const renderConciergerie = () => (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in bg-white">
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-slate-950 relative overflow-hidden">
         <div className="absolute inset-0 opacity-40">
@@ -1040,133 +1051,294 @@ function MainApp() {
         <div className="relative z-10 max-w-7xl mx-auto text-center">
           <span className="inline-block py-1 px-4 rounded-full bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs font-bold uppercase tracking-widest mb-6">Expertise & Excellence</span>
           <h1 className="text-4xl md:text-7xl font-black text-white mb-8 tracking-tight leading-tight">
-            Conciergerie & <br/> <span className="text-blue-500">Gestion Locative</span>
+            Présentation Professionnelle <br/> <span className="text-blue-500">Conciergerie Star’s Clean</span>
           </h1>
           <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto font-medium leading-relaxed">
-            Libérez-vous des contraintes et maximisez la rentabilité de votre patrimoine immobilier en Corse-du-Sud.
+            Optimisez la gestion de vos biens locatifs avec un acteur de référence en Corse-du-Sud.
           </p>
         </div>
       </section>
 
-      {/* Philosophy Section */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
+      {/* Navigation Summary (Sommaire) */}
+      <div className="sticky top-[76px] z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 hidden md:block overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center gap-8 text-xs font-bold uppercase tracking-widest text-slate-500">
+          {['À propos', 'Services', 'Clients', 'Tarifs', 'Contact'].map((item) => (
+            <button key={item} className="hover:text-blue-600 transition-colors whitespace-nowrap">{item}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* About Section */}
+      <section className="py-24 px-4 max-w-7xl mx-auto border-b border-slate-100">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight">
-              Votre propriété mérite <br/> <span className="text-blue-600">une gestion d'exception</span>
-            </h2>
+            <div className="space-y-4">
+              <span className="text-blue-600 font-bold uppercase tracking-widest text-xs">Depuis 2021</span>
+              <h2 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight">
+                À propos de nous
+              </h2>
+            </div>
             <p className="text-lg text-slate-600 leading-relaxed">
-              Chez Star's Clean Conciergerie, nous comprenons que votre bien est bien plus qu'un simple investissement. C'est un patrimoine précieux qui nécessite une attention de chaque instant.
+              Fondée en 2021, la <strong>Conciergerie Star’s Clean</strong> s'est rapidement imposée comme un acteur de référence dans la gestion d’hébergements pour propriétaires. 
             </p>
             <p className="text-lg text-slate-600 leading-relaxed">
-              Notre mission est simple : offrir à vos voyageurs une expérience hôtelière de luxe tout en vous garantissant une tranquillité d'esprit absolue et des revenus optimisés.
+              Forts de plusieurs années d’expérience, nous mettons notre expertise à votre service pour optimiser la gestion de vos biens locatifs, que ce soit pour des locations saisonnières ou de longue durée. Grâces à une équipe dédiée, nous garantissons à vos hôtes une expérience de qualité, tout en maximisant votre rentabilité.
             </p>
-            <div className="grid grid-cols-2 gap-8 pt-4">
-              <div>
-                <p className="text-4xl font-black text-blue-600 mb-2">5+</p>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Années d'expertise</p>
-              </div>
-              <div>
-                <p className="text-4xl font-black text-blue-600 mb-2">98%</p>
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">Clients satisfaits</p>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+              {[
+                { t: "Accueil & Check-in", icon: <Key size={20} /> },
+                { t: "Ménage Professionnel", icon: <Sparkles size={20} /> },
+                { t: "Gestion Réservations", icon: <Calendar size={20} /> },
+                { t: "Entretien Régulier", icon: <ShieldCheck size={20} /> }
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <div className="text-blue-600">{item.icon}</div>
+                  <span className="font-bold text-slate-700 text-sm">{item.t}</span>
+                </div>
+              ))}
             </div>
           </div>
           <div className="relative">
+            <div className="absolute -inset-4 bg-blue-100/50 rounded-[4rem] blur-2xl opacity-50" />
             <img 
               src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/qui-sommes-nous-equipe-conciergerie-airbnb-paris.jpeg" 
-              className="rounded-[3rem] shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500" 
-              alt="Notre équipe"
+              className="relative rounded-[3rem] shadow-2xl border-8 border-white object-cover aspect-[4/5] lg:aspect-auto" 
+              alt="Expertise Conciergerie Star's Clean"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute -bottom-8 -left-8 bg-white p-8 rounded-3xl shadow-2xl border border-slate-100 hidden md:block max-w-xs">
-              <Quote className="text-blue-200 mb-4" size={40} />
-              <p className="text-slate-700 italic font-medium">"Nous traitons chaque villa comme si c'était la nôtre, avec rigueur et passion."</p>
+            <div className="absolute -bottom-6 -left-6 bg-slate-900 p-6 rounded-3xl shadow-2xl max-w-[280px] hidden md:block">
+              <Quote className="text-blue-500 mb-3" size={32} />
+              <p className="text-slate-100 italic text-sm leading-relaxed font-medium mb-3">
+                “Nous prenons soin du moindre détail pour que vous puissiez profiter pleinement de votre temps.”
+              </p>
+              <p className="text-blue-400 font-black uppercase tracking-widest text-[10px]">- Conciergerie Star’s Clean</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Pillars */}
-      <section className="py-24 px-4 bg-slate-50 border-y border-slate-100">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Une offre clé en main</h2>
-            <p className="text-slate-500 text-xl max-w-2xl mx-auto">Nous gérons l'intégralité du cycle locatif pour vous.</p>
+      {/* Base Services Section */}
+      <section className="py-24 px-4 bg-slate-50 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Nos services de base</h2>
+            <p className="text-slate-500 text-lg leading-relaxed">Une gestion quotidienne rigoureuse pour assurer le bon fonctionnement de votre location.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
               {
-                title: "Marketing & Réservations",
-                desc: "Diffusion multi-plateformes (Airbnb, Booking, Abritel) et stratégie de tarification dynamique pour maximiser votre taux d'occupation.",
+                title: "1. Gestion des réservations",
+                desc: "Nous prenons en charge la gestion de vos calendriers sur les différentes plateformes en optimisant vos taux de remplissage.",
                 icon: <TrendingUp size={32} />,
                 color: "bg-blue-600"
               },
               {
-                title: "Accueil & Expérience Voyageur",
-                desc: "Check-in personnalisé, assistance 7j/7 et services de conciergerie haut de gamme pour des commentaires 5 étoiles garantis.",
+                title: "2. Accueil et départ",
+                desc: "Un accueil chaleureux et professionnel à chaque arrivée, suivi d’un état des lieux minutieux au départ pour garantir la sécurité de votre bien.",
                 icon: <Users size={32} />,
                 color: "bg-indigo-600"
               },
               {
-                title: "Logistique & Entretien",
-                desc: "Ménage professionnel aux standards hôteliers, gestion du linge et maintenance technique réactive pour préserver votre bien.",
-                icon: <ShieldCheck size={32} />,
+                title: "3. Ménage professionnel",
+                desc: "Service de nettoyage complet réalisé par des professionnels (Sol au plafond). Options spécifiques : Shampooing canapés & Literies.",
+                icon: <Sparkles size={32} />,
                 color: "bg-emerald-600"
+              },
+              {
+                title: "4. Assistance 24/7",
+                desc: "Un service client réactif pour répondre aux besoins des locataires tout au long de leur séjour afin de garantir leur satisfaction totale.",
+                icon: <Phone size={32} />,
+                color: "bg-slate-900"
               }
             ].map((service, i) => (
-              <div key={i} className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
-                <div className={`w-16 h-16 ${service.color} text-white rounded-2xl flex items-center justify-center mb-8 transform group-hover:scale-110 transition-transform`}>
+              <div key={i} className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-500 group flex flex-col items-center text-center md:items-start md:text-left">
+                <div className={`w-16 h-16 ${service.color} text-white rounded-2xl flex items-center justify-center mb-8 transform group-hover:rotate-6 transition-transform`}>
                   {service.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4">{service.title}</h3>
-                <p className="text-slate-500 leading-relaxed">{service.desc}</p>
+                <h3 className="text-2xl font-black text-slate-900 mb-4">{service.title}</h3>
+                <p className="text-slate-500 leading-relaxed text-lg">{service.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us - Detailed */}
+      {/* Premium Services Section */}
       <section className="py-24 px-4 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Pourquoi nous faire confiance ?</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {[
-            { t: "Transparence Totale", d: "Accédez à un espace propriétaire dédié pour suivre vos réservations et vos revenus en temps réel." },
-            { t: "Expertise Locale", d: "Basés en Corse-du-Sud, nous connaissons parfaitement le marché local et ses spécificités saisonnières." },
-            { t: "Standards Hôteliers", d: "Nous appliquons des protocoles de nettoyage et d'accueil dignes des plus grands hôtels." },
-            { t: "Réactivité Maximale", d: "Une équipe disponible 7j/7 pour répondre aux besoins de vos voyageurs et gérer les imprévus." }
-          ].map((item, idx) => (
-            <div key={idx} className="flex gap-6 items-start p-8 rounded-3xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-              <div className="bg-blue-100 text-blue-600 p-3 rounded-xl shrink-0">
-                <CheckCircle size={24} />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">{item.t}</h3>
-                <p className="text-slate-500 leading-relaxed">{item.d}</p>
-              </div>
+        <div className="flex flex-col lg:flex-row gap-16 items-start">
+          <div className="lg:w-1/3 pt-4">
+            <span className="text-blue-600 font-black uppercase tracking-[0.2em] text-[10px] mb-4 block">Exclusivité</span>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-8 leading-[1.1] tracking-tighter">Nos services premium</h2>
+            <p className="text-slate-500 text-lg mb-8 leading-relaxed">Poussez l'excellence encore plus loin avec nos solutions d'optimisation haut de gamme.</p>
+            <div className="p-8 bg-blue-50 rounded-3xl border border-blue-100 italic font-medium text-blue-900">
+              "Objectif : maximiser vos revenus locatifs tout en sublimant votre offre."
             </div>
-          ))}
+          </div>
+          <div className="lg:w-2/3 grid grid-cols-1 gap-6">
+            {[
+              {
+                title: "1. Gestion complète de l’annonce",
+                items: ["Photos professionnelles", "Descriptions attractives", "Stratégies tarifaires dynamiques"],
+                icon: <Camera className="text-blue-600" />
+              },
+              {
+                title: "2. Check-in personnalisé",
+                items: ["Accueil VIP avec options sur-mesure", "Panier d’accueil spécialisé", "Recommandations locales & Assistance"],
+                icon: <Heart className="text-pink-600" />
+              },
+              {
+                title: "3. Audit et optimisation du bien",
+                items: ["Conseils aménagement & décoration", "Analyse des équipements", "Étude des performances gains"],
+                icon: <Award className="text-amber-600" />
+              }
+            ].map((p, idx) => (
+              <div key={idx} className="bg-white border-2 border-slate-100 rounded-[2.5rem] p-8 md:p-12 hover:border-blue-200 transition-colors flex gap-8">
+                <div className="shrink-0 pt-2">{p.icon}</div>
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-6">{p.title}</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {p.items.map((item, i) => (
+                      <span key={i} className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-full text-sm font-bold text-slate-700">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto bg-gradient-to-br from-blue-600 to-indigo-800 p-12 md:p-20 rounded-[3rem] shadow-2xl text-white text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-12 opacity-10"><Sparkles size={200} /></div>
-          <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight relative z-10">Prêt à déléguer la gestion <br/> de votre bien ?</h2>
-          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto relative z-10">Discutons de votre projet et obtenez une estimation gratuite de vos revenus locatifs potentiels.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
-            <Button variant="secondary" onClick={() => navigate('contact')} className="bg-white text-blue-600 hover:bg-blue-50 px-12 py-5 text-xl">
-              Obtenir mon devis gratuit
-            </Button>
-            <Button variant="outline" onClick={() => navigate('contact')} className="border-white text-white hover:bg-white/10 px-12 py-5 text-xl">
-              Nous appeler
-            </Button>
+      {/* Client Types Section */}
+      <section className="py-24 px-4 bg-slate-900 text-white rounded-[4rem] mx-4 mb-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">Nos clients types</h2>
+            <p className="text-slate-400 text-xl font-light">Une expertise adaptée à chaque profil d'investisseur.</p>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              { 
+                t: "Propriétaires Particuliers", 
+                d: "Résidences principales, secondaires ou investissements locatifs. Accompagnement complet pour déléguer la gestion.",
+                icon: <Home className="text-blue-400" size={40} />
+              },
+              { 
+                t: "Investisseurs Immobiliers", 
+                d: "Gestion clé en main pour plusieurs biens : Occupation maximale, entretien impeccable et gestion transparente.",
+                icon: <Briefcase className="text-amber-400" size={40} />
+              },
+              { 
+                t: "Hôtels & Résidences", 
+                d: "Services de conciergerie externalisés pour offrir une expérience client haut de gamme et personnalisée.",
+                icon: <Award className="text-emerald-400" size={40} />
+              }
+            ].map((client, idx) => (
+              <div key={idx} className="bg-white/5 border border-white/10 p-10 rounded-[3rem] text-center group hover:bg-white/10 transition-all">
+                <div className="mb-8 flex justify-center transform group-hover:scale-110 transition-transform">{client.icon}</div>
+                <h3 className="text-2xl font-black mb-4">{client.t}</h3>
+                <p className="text-slate-400 leading-relaxed text-sm lg:text-base">{client.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section (Forfaits) */}
+      <section className="py-24 px-4 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight leading-[1.1]">Nos forfaits et tarifs</h2>
+          <div className="w-24 h-1.5 bg-blue-600 mx-auto rounded-full mt-4" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+          {/* Plan 1 */}
+          <div className="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-sm hover:shadow-xl transition-all">
+            <h3 className="text-2xl font-black text-slate-900 mb-4">Forfait Mensualisation</h3>
+            <div className="flex items-baseline gap-2 mb-8">
+              <span className="text-4xl font-black text-blue-600">200 €</span>
+              <span className="text-slate-400 font-bold">/ mois</span>
+            </div>
+            <ul className="space-y-4 mb-8">
+              {['Gestion des réservations', 'Accueil des locataires', 'Ménage professionnel', 'Assistance 24/7'].map((f, i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-600 font-medium">
+                  <CheckCircle size={18} className="text-blue-500" /> {f}
+                </li>
+              ))}
+            </ul>
+            <div className="p-6 bg-slate-50 rounded-2xl text-xs font-bold text-slate-500 leading-relaxed border border-slate-100">
+              Note : Régularisation en fin de saison à 30 % du revenu locatif.
+            </div>
+          </div>
+
+          {/* Plan 2 - Featured */}
+          <div className="bg-slate-900 rounded-[3rem] p-10 shadow-2xl relative transform scale-105 border-4 border-blue-600/30">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-6 py-1 rounded-full text-xs font-black uppercase tracking-widest">Populaire</div>
+            <h3 className="text-2xl font-black text-white mb-4">Forfait Saison</h3>
+            <div className="flex items-baseline gap-2 mb-8">
+              <span className="text-4xl font-black text-blue-400">30 %</span>
+              <span className="text-slate-400 font-bold">revenu net</span>
+            </div>
+            <ul className="space-y-4 mb-8">
+              {['Tous les services de base', 'Optimisation des annonces', 'Check-in personnalisé', 'Conciergerie locataires', 'Audit du bien'].map((f, i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-300 font-medium">
+                  <CheckCircle size={18} className="text-blue-400" /> {f}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-slate-500 font-bold italic mb-8">Paiement : 30 % en fin de saison (septembre)</p>
+            <Button className="w-full py-4 text-sm" onClick={() => navigate('contact')}>Choisir ce forfait</Button>
+          </div>
+
+          {/* Plan 3 */}
+          <div className="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-sm hover:shadow-xl transition-all">
+            <h3 className="text-2xl font-black text-slate-900 mb-4">À la carte</h3>
+            <div className="flex flex-col gap-2 mb-8">
+              <span className="text-xl font-bold text-slate-900">Sur demande</span>
+            </div>
+            <p className="text-slate-500 text-sm mb-6 leading-relaxed">Possibilité de souscrire uniquement pour certains services selon vos besoins spécifiques.</p>
+            <ul className="space-y-4 mb-2">
+              {['Entretien avancé', 'Rénovation spécifique', 'Gestion d’annonce seule', 'Gestion de calendrier seule'].map((f, i) => (
+                <li key={i} className="flex items-center gap-3 text-slate-600 font-medium text-sm">
+                  <Plus size={16} className="text-emerald-500" /> {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="py-24 px-4">
+        <div className="max-w-5xl mx-auto bg-slate-50 rounded-[4rem] p-12 md:p-20 border border-slate-100 flex flex-col items-center text-center">
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-12 tracking-tight">Contactez-nous</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12 w-full">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center"><Phone size={24} /></div>
+              <div>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">Téléphone</p>
+                <p className="text-lg font-black text-slate-900">+33 6 42 65 85 98</p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center"><Compass size={24} /></div>
+              <div>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">Navigation</p>
+                <p className="text-lg font-black text-slate-900">www.conciergerie-corsedusud.fr</p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center"><Mail size={24} /></div>
+              <div>
+                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">E-mail</p>
+                <p className="text-xs font-black text-slate-900 break-all">conciergerie.prestige2a@gmail.com</p>
+              </div>
+            </div>
+          </div>
+          <Button onClick={() => navigate('contact')} className="px-12 py-5 text-xl transition-all hover:px-16">
+            Lancer mon projet
+          </Button>
         </div>
       </section>
     </div>
@@ -1383,7 +1555,7 @@ function MainApp() {
           <ChevronLeft size={20}/> Retour aux prestations
         </button>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className={`grid grid-cols-1 ${s.id === 'car-rental' ? 'lg:grid-cols-1' : 'lg:grid-cols-2'} gap-16`}>
           <div className="space-y-8">
             <div className="p-6 bg-blue-50 w-fit rounded-3xl text-blue-600">
               {getServiceIcon(s.icon, 48)}
@@ -1407,45 +1579,145 @@ function MainApp() {
             </div>
             <div className="space-y-6">
               {s.id === 'car-rental' ? (
-                <div className="space-y-8">
-                  <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                    <p className="text-xl text-slate-700 leading-relaxed font-medium mb-4">
-                      La voiture familiale qui se plie à vos envies. Enfin de l'espace pour tous vos passagers !
-                    </p>
-                    <p className="text-slate-600 leading-relaxed">
-                      Le véhicule Jogger se décline en plusieurs versions modulables pour accueillir de 2 à 7 passagers sans concession pour le confort et l'habitabilité.
-                    </p>
+                <div className="space-y-12">
+                  {/* Vehicule 1: Jogger */}
+                  <div className="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-lg group">
+                    <div className="grid grid-cols-1 lg:grid-cols-2">
+                       <div className="p-8 md:p-12 space-y-6">
+                        <div className="inline-block px-4 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest">Familial & Modulable</div>
+                        <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">Dacia Jogger – Le Break SUV d'Exception</h3>
+                        <p className="text-slate-700 leading-relaxed font-medium">
+                          La voiture familiale qui se plie à vos envies. Enfin de l'espace pour tous vos passagers !
+                        </p>
+                        <p className="text-slate-500 leading-relaxed">
+                          Le véhicule Jogger se décline en plusieurs versions modulables pour accueillir de <span className="font-bold text-slate-900">2 à 7 passagers</span> sans concession pour le confort et l'habitabilité.
+                        </p>
+                        
+                        <div className="grid grid-cols-2 gap-4 pt-4">
+                           <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                              <Zap className="text-blue-600" size={20} />
+                              <div>
+                                 <p className="text-xs font-black text-blue-900 uppercase tracking-tighter">Polyvalence</p>
+                                 <p className="text-[10px] text-blue-700">Break & SUV</p>
+                              </div>
+                           </div>
+                           <div className="flex items-center gap-3 bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                              <Users className="text-indigo-600" size={20} />
+                              <div>
+                                 <p className="text-xs font-black text-indigo-900 uppercase tracking-tighter">Capacité</p>
+                                 <p className="text-[10px] text-indigo-700">Jusqu'à 7 places</p>
+                              </div>
+                           </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                           <div className="bg-slate-50 px-4 py-2 rounded-xl text-[10px] font-black text-slate-500 uppercase">
+                              Option : Siège enfant / Réhausseur
+                           </div>
+                           <div className="text-right">
+                              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dès</span>
+                              <span className="text-2xl font-black text-blue-600">50 € / jour</span>
+                           </div>
+                        </div>
+                       </div>
+                       <div className="bg-slate-100 relative min-h-[350px] overflow-hidden">
+                          <img 
+                            src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/voiture1.png" 
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" 
+                            alt="Dacia Jogger" 
+                            referrerPolicy="no-referrer" 
+                          />
+                       </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex items-start gap-4">
-                      <div className="bg-blue-600 text-white p-2 rounded-lg shrink-0"><Zap size={20}/></div>
-                      <div>
-                        <p className="font-bold text-blue-900">Polyvalence</p>
-                        <p className="text-sm text-blue-700">Break & SUV</p>
-                      </div>
-                    </div>
-                    <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100 flex items-start gap-4">
-                      <div className="bg-emerald-600 text-white p-2 rounded-lg shrink-0"><Award size={20}/></div>
-                      <div>
-                        <p className="font-bold text-emerald-900">Tarif</p>
-                        <p className="text-sm text-emerald-700">Dès 50€/j * selon la période</p>
-                      </div>
+                  {/* Vehicule 2: Sandero */}
+                  <div className="bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-lg group">
+                    <div className="grid grid-cols-1 lg:grid-cols-2">
+                       <div className="order-2 lg:order-1 bg-slate-50 relative min-h-[350px] overflow-hidden">
+                          <img 
+                            src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/properties/1776674063476-7y689smrzd4.jpg" 
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 mix-blend-multiply opacity-80" 
+                            alt="Dacia Sandero" 
+                            referrerPolicy="no-referrer" 
+                          />
+                       </div>
+                       <div className="order-1 lg:order-2 p-8 md:p-12 space-y-6">
+                        <div className="inline-block px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest">Économique & Pratique</div>
+                        <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">Dacia Sandero 2020 – Pratique, économique et confortable</h3>
+                        <p className="text-slate-700 leading-relaxed font-medium">
+                          Optez pour la location de cette Dacia Sandero de 2020, un véhicule fiable et économique, idéal pour vos déplacements en toute simplicité.
+                        </p>
+                        <p className="text-slate-500 leading-relaxed">
+                          Parfaite pour découvrir la région en toute liberté, cette citadine polyvalente offre un excellent compromis entre confort, maniabilité et faible consommation.
+                        </p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
+                           <div className="space-y-3">
+                              <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2"><CheckCircle size={16} className="text-blue-500" /> Caractéristiques</h4>
+                              <ul className="space-y-2 text-xs text-slate-500 font-medium">
+                                 <li>• Modèle : Dacia Sandero (2020)</li>
+                                 <li>• Véhicule économique & facile</li>
+                                 <li>• Idéal trajets urbains & escapades</li>
+                                 <li>• Confort 4 à 5 passagers</li>
+                              </ul>
+                           </div>
+                           <div className="space-y-3">
+                              <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2"><Plus size={16} className="text-emerald-500" /> Les +</h4>
+                              <ul className="space-y-2 text-xs text-slate-500 font-medium">
+                                 <li>• Fiable et bien entretenu</li>
+                                 <li>• Solution sans contrainte</li>
+                                 <li>• Partenaires familles & couples</li>
+                              </ul>
+                           </div>
+                        </div>
+
+                        <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                           <div className="bg-slate-50 px-4 py-2 rounded-xl text-[10px] font-black text-slate-500 uppercase">
+                              Option : Siège enfant / Réhausseur
+                           </div>
+                           <div className="text-right">
+                              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dès</span>
+                              <span className="text-2xl font-black text-blue-600">50 € / jour</span>
+                           </div>
+                        </div>
+                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl">
-                    <div className="flex items-center gap-3 mb-4">
-                      <MapPin className="text-blue-400" />
-                      <h3 className="text-lg font-bold">Disponibilité & Livraison</h3>
-                    </div>
-                    <p className="text-slate-300 mb-6 leading-relaxed">
-                      Le véhicule est disponible au départ et au retour de l'aéroport de <span className="text-white font-bold">Figari</span>.
-                    </p>
-                    <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                      <p className="text-sm text-slate-400 italic">
-                        Possibilité de livraison à Bastia ou Ajaccio (+100€ de supplément).
-                      </p>
+                  {/* Availability Info */}
+                  <div className="bg-slate-900 text-white p-10 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-20 opacity-5 -mr-10"><MapPin size={300} /></div>
+                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+                       <div className="lg:col-span-2 space-y-6">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-blue-600 text-white p-3 rounded-2xl shadow-lg"><MapPin size={24} /></div>
+                          <h3 className="text-3xl font-black tracking-tight">Disponibilité & Livraison</h3>
+                        </div>
+                        <p className="text-slate-300 text-lg leading-relaxed max-w-2xl">
+                          Le véhicule est disponible au départ et au retour de l'aéroport de <span className="text-white font-black underline decoration-blue-500 underline-offset-8">Figari</span>. Parcourez les routes corses en toute liberté dès votre descente d'avion.
+                        </p>
+                        <div className="flex flex-wrap gap-4 pt-2">
+                           <div className="bg-white/10 backdrop-blur-md border border-white/10 px-6 py-4 rounded-2xl flex items-center gap-3">
+                              <CheckCircle className="text-emerald-400" size={20} />
+                              <span className="font-bold text-sm">Gestion simple & rapide</span>
+                           </div>
+                           <div className="bg-white/10 backdrop-blur-md border border-white/10 px-6 py-4 rounded-2xl flex items-center gap-3">
+                              <Clock className="text-blue-400" size={20} />
+                              <span className="font-bold text-sm">Service Client 24/7</span>
+                           </div>
+                        </div>
+                       </div>
+                       <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] space-y-4">
+                          <p className="text-xs font-black text-blue-400 uppercase tracking-[0.2em] mb-2">Options Longue Distance</p>
+                          <p className="text-slate-300 text-sm leading-relaxed">
+                             Possibilité de livraison ou récupération à l'aéroport de <span className="text-white font-bold">Bastia</span> ou <span className="text-white font-bold">Ajaccio</span>.
+                          </p>
+                          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+                             <span className="text-xs font-bold text-slate-500 italic">Supplément</span>
+                             <span className="bg-white text-slate-900 px-3 py-1 rounded-lg font-black text-sm">+ 100€</span>
+                          </div>
+                       </div>
                     </div>
                   </div>
                 </div>
@@ -1525,52 +1797,130 @@ function MainApp() {
                       </div>
                     </div>
                   </div>
-
-                  <div className="p-6 bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-center">
-                    <p className="text-slate-600">
-                      Nous travaillons également avec d’autres prestataires. <br/>
-                      <span className="font-bold text-slate-900">N’hésitez pas à nous contacter pour plus de renseignements.</span>
-                    </p>
-                  </div>
                 </div>
               ) : s.id === 'wine-tasting' ? (
-                <div className="space-y-10">
-                  <div className="bg-gradient-to-br from-red-700 to-rose-900 p-8 rounded-[2.5rem] text-white shadow-xl">
-                    <h3 className="text-2xl font-bold mb-4">Une immersion au cœur du terroir Corse</h3>
-                    <p className="text-rose-50 text-lg leading-relaxed">
-                      Profitez d’une expérience unique de visite de cave avec <span className="font-bold">Star's Clean Conciergerie</span> en Corse-du-Sud.
-                    </p>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                      <div className="bg-red-100 text-red-600 p-2 rounded-xl"><Wine size={24}/></div>
-                      <h3 className="text-2xl font-bold text-slate-900">Dégustation & Savoir-faire</h3>
-                    </div>
-                    <p className="text-slate-600 leading-relaxed text-lg">
-                      Star's Clean Conciergerie dans l'extrême Sud de la Corse vous propose une expérience unique de visite des caves et de dégustation de vins, notamment au domaine de Zuria et au domaine de la Murta.
-                    </p>
-                    <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 flex items-start gap-6">
-                      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 shrink-0">
-                        <Sparkles className="text-amber-500" size={32} />
-                      </div>
-                      <p className="text-slate-700 leading-relaxed">
-                        Que vous soyez un amateur de vin passionné ou simplement curieux de découvrir les secrets de la vinification, notre visite vous promet une expérience inoubliable.
+                <div className="space-y-16 py-4">
+                  {/* Luxury Header/Intro */}
+                  <div className="relative rounded-[3rem] overflow-hidden group min-h-[400px] flex items-center shadow-2xl">
+                    <img 
+                      src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/properties/1776672754990-8mmsrpn0tee.png" 
+                      alt="Wine Cellar" 
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-950/90 via-red-900/40 to-transparent" />
+                    <div className="relative z-10 p-8 md:p-16 max-w-2xl text-white">
+                      <span className="inline-block px-4 py-1.5 bg-red-600/30 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-[0.2em] mb-6 border border-white/20">Expérience Exclusive</span>
+                      <h3 className="text-4xl md:text-5xl font-black mb-6 leading-[1.1] tracking-tighter">L'Art de la Vigne en Corse-du-Sud</h3>
+                      <p className="text-red-50 text-lg md:text-xl leading-relaxed font-light opacity-90">
+                        Star's Clean Conciergerie vous ouvre les portes des domaines les plus prestigieux de l'île pour une immersion sensorielle au sommet de l'excellence.
                       </p>
                     </div>
                   </div>
 
-                  <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-blue-100 text-blue-600 p-2 rounded-xl"><Mail size={24}/></div>
-                      <h3 className="text-xl font-bold text-slate-900">Plus d'informations ?</h3>
+                  {/* Storytelling Sections */}
+                  <div className="space-y-24">
+                    {/* Domaine de Zuria - Now 1st */}
+                    <div className="flex flex-col lg:flex-row items-center gap-12 group">
+                      <div className="w-full lg:w-1/2 relative">
+                        <div className="absolute -inset-4 bg-blue-50 rounded-[3.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="relative rounded-[3rem] overflow-hidden aspect-[4/3] shadow-xl">
+                          <img 
+                            src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/domaine.png" 
+                            alt="Domaine de Zuria" 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                      </div>
+                      <div className="w-full lg:w-1/2 px-4">
+                        <span className="text-blue-700 font-black uppercase tracking-[0.3em] text-xs mb-4 block">Modernité & Pureté</span>
+                        <h4 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Domaine de Zuria</h4>
+                        <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                          Face aux falaises de Bonifacio, le Domaine de Zuria est une ode à l'architecture contemporaine et au respect du vivant. Ce vignoble en bio-dynamie sublime la minéralité calcaire de son sol pour sculpter des blancs d'une tension cristalline et des rosés d'une élégance absolue.
+                        </p>
+                        <ul className="space-y-4 mb-8">
+                          {['Découverte de l\'architecture bioclimatique','Ateliers sensoriels personnalisés','Expérience gastronomique & accords mets-vins'].map((item, i) => (
+                            <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-600" /> {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                    <p className="text-slate-600 leading-relaxed">
-                      Pour plus d’informations, contactez-nous via le formulaire de contact. Nous sommes toujours disponibles pour répondre à toutes vos demandes dans les plus brefs délais.
-                    </p>
-                    <Button onClick={() => navigate('contact')} variant="outline" className="w-full py-4 border-blue-200 text-blue-600 hover:bg-blue-50">
-                      Accéder au formulaire
-                    </Button>
+
+                    {/* Domaine de la Murta - Now 2nd */}
+                    <div className="flex flex-col lg:flex-row-reverse items-center gap-12 group">
+                      <div className="w-full lg:w-1/2 relative">
+                        <div className="absolute -inset-4 bg-red-50 rounded-[3.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="relative rounded-[3rem] overflow-hidden aspect-[4/3] shadow-xl">
+                          <img 
+                            src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/properties/1776672771400-alwisv1b0gk.png" 
+                            alt="Domaine de la Murta" 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                      </div>
+                      <div className="w-full lg:w-1/2 px-4">
+                        <span className="text-red-700 font-black uppercase tracking-[0.3em] text-xs mb-4 block">Héritage & Terroir</span>
+                        <h4 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Domaine de la Murta</h4>
+                        <p className="text-slate-600 text-lg leading-relaxed mb-8">
+                          Niché dans la splendeur sauvage de l'Alta Rocca, le Domaine de la Murta est le gardien des traditions séculaires. Ici, les cépages endémiques sont magnifiés par un climat privilégié, offrant des vins d'une profondeur rare qui racontent l'histoire brute et généreuse du sol corse.
+                        </p>
+                        <ul className="space-y-4 mb-8">
+                          {['Visite des vignobles en buggy','Dégustation millésimée','Secrets de vinification traditionnelle'].map((item, i) => (
+                            <li key={i} className="flex items-center gap-3 text-slate-700 font-medium">
+                              <div className="w-1.5 h-1.5 rounded-full bg-red-600" /> {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Highlights Summary */}
+                  <div className="bg-slate-50 rounded-[3rem] p-10 md:p-16 border border-slate-100">
+                    <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
+                      <div className="space-y-4">
+                        <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto text-red-600 border border-slate-100">
+                          <Wine size={24} />
+                        </div>
+                        <h5 className="font-bold text-slate-900">Domaines Privés</h5>
+                        <p className="text-sm text-slate-500 leading-relaxed">Accès exclusif à des propriétés fermées au grand public.</p>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto text-amber-500 border border-slate-100">
+                          <Award size={24} />
+                        </div>
+                        <h5 className="font-bold text-slate-900">Expertise Sommelier</h5>
+                        <p className="text-sm text-slate-500 leading-relaxed">Accompagnement par des passionnés du terroir insulaire.</p>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto text-blue-600 border border-slate-100">
+                          <Sun size={24} />
+                        </div>
+                        <h5 className="font-bold text-slate-900">Expérience Sur Mesure</h5>
+                        <p className="text-sm text-slate-500 leading-relaxed">Itinéraires personnalisés selon vos préférences gustatives.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Refined Contact CTA */}
+                  <div className="relative rounded-[3rem] bg-slate-900 p-8 md:p-16 text-center text-white overflow-hidden shadow-2xl">
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="absolute top-0 left-0 w-64 h-64 bg-red-600 blur-[100px] rounded-full -translate-x-1/2 -translate-y-1/2" />
+                      <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-600 blur-[100px] rounded-full translate-x-1/2 translate-y-1/2" />
+                    </div>
+                    <div className="relative z-10 max-w-2xl mx-auto">
+                      <h4 className="text-2xl md:text-3xl font-bold mb-6">Prêt à vivre une expérience inoubliable ?</h4>
+                      <p className="text-slate-400 mb-10 text-lg leading-relaxed">
+                        Que vous souhaitiez une demi-journée de découverte ou une itinérance complète, notre équipe organise chaque détail de votre aventure œnologique.
+                      </p>
+                      <Button onClick={() => navigate('contact')} className="h-16 px-12 bg-white text-slate-900 hover:bg-white/90 rounded-2xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl w-full sm:w-auto">
+                        Réserver ma dégustation
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ) : s.id === 'breakfast' ? (
@@ -1725,18 +2075,20 @@ function MainApp() {
             </div>
           </div>
           
-          <div className="hidden lg:grid grid-cols-1 gap-6">
-            {s.images.map((img, idx) => (
-              <div key={idx} className="overflow-hidden rounded-[2.5rem] shadow-xl border border-slate-100 aspect-[4/3]">
-                <img 
-                  src={img} 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
-                  alt={`${s.title} ${idx + 1}`}
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-            ))}
-          </div>
+          {s.id !== 'car-rental' && (
+            <div className="hidden lg:grid grid-cols-1 gap-6">
+              {s.images.map((img, idx) => (
+                <div key={idx} className="overflow-hidden rounded-[2.5rem] shadow-xl border border-slate-100 aspect-[4/3]">
+                  <img 
+                    src={img} 
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
+                    alt={`${s.title} ${idx + 1}`}
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -1797,7 +2149,7 @@ function MainApp() {
             <h2 className="font-black text-white mb-6 uppercase text-xs tracking-widest">Navigation</h2>
             <ul className="space-y-4 text-sm text-slate-400">
               <li><button onClick={() => navigate('home')} className="hover:text-blue-400 transition-colors">Accueil</button></li>
-              <li><button onClick={() => navigate('conciergerie')} className="hover:text-blue-400 transition-colors">Conciergerie</button></li>
+              <li><button onClick={() => navigate('conciergerie')} className="hover:text-blue-400 transition-colors">Propriétaires</button></li>
               <li><button onClick={() => navigate('properties')} className="hover:text-blue-400 transition-colors">Nos biens</button></li>
               <li><button onClick={() => navigate('contact')} className="hover:text-blue-400 transition-colors">Contact</button></li>
             </ul>
