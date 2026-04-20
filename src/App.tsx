@@ -1555,7 +1555,7 @@ function MainApp() {
           <ChevronLeft size={20}/> Retour aux prestations
         </button>
         
-        <div className={`grid grid-cols-1 ${s.id === 'car-rental' ? 'lg:grid-cols-1' : 'lg:grid-cols-2'} gap-16`}>
+        <div className={`grid grid-cols-1 ${(s.id === 'car-rental' || s.id === 'wine-tasting') ? 'lg:grid-cols-1' : 'lg:grid-cols-2'} gap-16`}>
           <div className="space-y-8">
             <div className="p-6 bg-blue-50 w-fit rounded-3xl text-blue-600">
               {getServiceIcon(s.icon, 48)}
@@ -1912,7 +1912,7 @@ function MainApp() {
                       <div className="absolute top-0 left-0 w-64 h-64 bg-red-600 blur-[100px] rounded-full -translate-x-1/2 -translate-y-1/2" />
                       <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-600 blur-[100px] rounded-full translate-x-1/2 translate-y-1/2" />
                     </div>
-                    <div className="relative z-10 max-w-2xl mx-auto">
+                    <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
                       <h4 className="text-2xl md:text-3xl font-bold mb-6">Prêt à vivre une expérience inoubliable ?</h4>
                       <p className="text-slate-400 mb-10 text-lg leading-relaxed">
                         Que vous souhaitiez une demi-journée de découverte ou une itinérance complète, notre équipe organise chaque détail de votre aventure œnologique.
@@ -2075,14 +2075,16 @@ function MainApp() {
                 </p>
               )}
             </div>
-            <div className="pt-4">
-              <Button onClick={() => navigate('contact')} className="px-10 py-5 text-xl">
-                Réserver ce service
-              </Button>
-            </div>
+            {s.id !== 'wine-tasting' && (
+              <div className="pt-4">
+                <Button onClick={() => navigate('contact')} className="px-10 py-5 text-xl">
+                  Réserver ce service
+                </Button>
+              </div>
+            )}
           </div>
           
-          {s.id !== 'car-rental' && (
+          {(s.id !== 'car-rental' && s.id !== 'wine-tasting') && (
             <div className="hidden lg:grid grid-cols-1 gap-6">
               {s.images.map((img, idx) => (
                 <div key={idx} className="overflow-hidden rounded-[2.5rem] shadow-xl border border-slate-100 aspect-[4/3]">
