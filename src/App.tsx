@@ -1713,9 +1713,14 @@ function MainApp() {
                           <p className="text-slate-300 text-sm leading-relaxed">
                              Possibilité de livraison ou récupération à l'aéroport de <span className="text-white font-bold">Bastia</span> ou <span className="text-white font-bold">Ajaccio</span>.
                           </p>
-                          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
-                             <span className="text-xs font-bold text-slate-500 italic">Supplément</span>
-                             <span className="bg-white text-slate-900 px-3 py-1 rounded-lg font-black text-sm">+ 100€</span>
+                          <div className="mt-4 pt-4 border-t border-white/10">
+                             <Button 
+                               onClick={() => navigate('contact')} 
+                               variant="outline" 
+                               className="w-full border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white text-xs font-black transition-all"
+                             >
+                               Demander un devis
+                             </Button>
                           </div>
                        </div>
                     </div>
