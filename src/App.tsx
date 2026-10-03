@@ -1082,13 +1082,13 @@ function MainApp() {
               Fondée en 2021, la <strong>Conciergerie Star’s Clean</strong> s'est rapidement imposée comme un acteur de référence dans la gestion d’hébergements pour propriétaires. 
             </p>
             <p className="text-lg text-slate-600 leading-relaxed">
-              Forts de plusieurs années d’expérience, nous mettons notre expertise à votre service pour optimiser la gestion de vos biens locatifs, que ce soit pour des locations saisonnières ou de longue durée. Grâces à une équipe dédiée, nous garantissons à vos hôtes une expérience de qualité, tout en maximisant votre rentabilité.
+              Forts de plusieurs années d’expérience, nous mettons notre expertise à votre service pour optimiser la gestion de vos biens locatifs, que ce soit pour des locations saisonnières ou de longue durée. Grâce à une équipe dédiée, nous garantissons à vos hôtes une expérience de qualité, tout en maximisant votre rentabilité.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
               {[
                 { t: "Accueil & Check-in", icon: <Key size={20} /> },
                 { t: "Ménage Professionnel", icon: <Sparkles size={20} /> },
-                { t: "Gestion Réservations", icon: <Calendar size={20} /> },
+                { t: "Gestion des Réservations", icon: <Calendar size={20} /> },
                 { t: "Entretien Régulier", icon: <ShieldCheck size={20} /> }
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
