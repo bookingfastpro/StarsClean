@@ -23,7 +23,7 @@ export default function ServiceDetail({ service: s }: { service: Service }) {
             <div className="p-6 bg-blue-50 w-fit rounded-3xl text-blue-600">
               {getServiceIcon(s.icon, 48)}
             </div>
-            <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight capitalize">
+            <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight">
               {s.title}
             </h1>
 
@@ -179,8 +179,8 @@ export default function ServiceDetail({ service: s }: { service: Service }) {
                           <div className="mt-4 pt-4 border-t border-white/10">
                              <Button 
                                onClick={() => navigate(PATHS.contact)} 
-                               variant="outline" 
-                               className="w-full border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white text-xs font-black transition-all"
+                               variant="outlineLight"
+                               className="w-full text-sm"
                              >
                                Demander un devis
                              </Button>
@@ -385,7 +385,7 @@ export default function ServiceDetail({ service: s }: { service: Service }) {
                       <p className="text-slate-400 mb-10 text-lg leading-relaxed">
                         Que vous souhaitiez une demi-journée de découverte ou une itinérance complète, notre équipe organise chaque détail de votre aventure œnologique.
                       </p>
-                      <Button onClick={() => navigate(PATHS.contact)} className="h-16 px-12 bg-white text-slate-900 hover:bg-white/90 rounded-2xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl w-full sm:w-auto">
+                      <Button variant="light" onClick={() => navigate(PATHS.contact)} className="px-12 w-full sm:w-auto !text-slate-900">
                         Réserver ma dégustation
                       </Button>
                     </div>
@@ -513,7 +513,7 @@ export default function ServiceDetail({ service: s }: { service: Service }) {
                         <p className="text-slate-700 leading-relaxed mb-4">
                           Rapprochez-vous de notre conciergerie pour obtenir un <span className="font-bold text-blue-900">devis personnalisé</span> adapté à vos besoins.
                         </p>
-                        <Button onClick={() => navigate(PATHS.contact)} variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-100">
+                        <Button onClick={() => navigate(PATHS.contact)} variant="outline" className="text-base">
                           Demander un devis
                         </Button>
                       </div>

@@ -16,20 +16,21 @@ export default function Prestations() {
   return (
     <div className="animate-fade-in">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 bg-blue-600 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
+      <section className="pt-32 pb-20 px-4 bg-slate-950 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-40">
           <img 
             src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/calanques-de-bonifacio.jpg" 
             className="w-full h-full object-cover" 
             alt=""
-            loading="lazy" decoding="async" referrerPolicy="no-referrer"
+            fetchPriority="high" referrerPolicy="no-referrer"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950"></div>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto text-center text-white">
           <h1 className="text-4xl md:text-7xl font-semibold mb-6 tracking-tight leading-tight">
-            Les prestations de <br/> <span className="text-blue-200">Star's Clean Conciergerie</span>
+            Les prestations de <br/> <span className="text-blue-500">Star's Clean Conciergerie</span>
           </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto font-medium opacity-90">
+          <p className="text-xl md:text-2xl max-w-3xl mx-auto font-medium text-slate-300">
             Prestations aux meilleurs prix dans l'extrême Sud de la Corse
           </p>
         </div>
@@ -83,7 +84,7 @@ export default function Prestations() {
                 <div className="mb-6 p-4 bg-slate-50 w-fit rounded-2xl group-hover:bg-blue-50 transition-colors">
                   {getServiceIcon(service.icon, 32, "text-blue-600")}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-4 capitalize">{service.title}</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">{service.title}</h3>
                 <p className="text-slate-500 leading-relaxed">{service.desc}</p>
                 <div className="mt-6 flex items-center gap-2 text-blue-600 font-bold text-sm md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   En savoir plus <ArrowRight size={16} />

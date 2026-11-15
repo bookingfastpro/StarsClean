@@ -45,7 +45,7 @@ export default function Home() {
   return (
     <div className="animate-fade-in">
       {/* Hero */}
-      <section className="relative min-h-[100svh] flex items-center justify-center px-4 pt-24 pb-12 md:py-0 overflow-hidden">
+      <section className="relative min-h-[100svh] flex items-center justify-center px-4 pt-28 pb-16 md:pt-32 md:pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden bg-slate-950">
           <Img
             priority
@@ -62,7 +62,7 @@ export default function Home() {
           <span className="inline-flex items-center gap-2 py-2 px-6 rounded-full bg-blue-600/20 text-blue-300 border border-blue-500/30 backdrop-blur-md font-semibold text-xs md:text-sm mb-4 md:mb-8 animate-slide-up shadow-lg">
             <Award size={18} /> Conciergerie d'excellence en Corse
           </span>
-          <h1 className="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-semibold text-white mb-4 md:mb-8 leading-[1.2] md:leading-[1.1] animate-slide-up drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] tracking-tighter">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-white mb-4 md:mb-8 leading-[1.2] md:leading-[1.1] animate-slide-up drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] tracking-tighter">
             Conciergerie & gestion locative <br className="hidden sm:block" /> en{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 font-semibold">Corse-du-Sud</span>
           </h1>
@@ -152,7 +152,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {LOCAL_PAGES.map((l) => (
-              <Link key={l.slug} to={localPath(l)} className="group relative rounded-[2rem] overflow-hidden aspect-[4/5] shadow-xl">
+              <Link key={l.slug} to={localPath(l)} className="group relative rounded-[2rem] overflow-hidden aspect-[16/10] sm:aspect-[4/5] shadow-xl">
                 <Img src={l.image} alt={`Conciergerie à ${l.city}`} width={600} height={750} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent" />
                 <div className="absolute bottom-0 p-6 text-white">
@@ -252,7 +252,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 p-10 md:p-16 rounded-[3rem] shadow-2xl text-white text-center">
           <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">Vous êtes propriétaire en Corse-du-Sud ?</h2>
           <p className="text-lg text-blue-100 mb-8">Recevez une estimation gratuite des revenus de votre bien et une proposition de gestion sur mesure.</p>
-          <Button variant="secondary" onClick={() => navigate(`${PATHS.contact}?sujet=proprietaire`)} className="bg-white !text-blue-700 hover:bg-blue-50 mx-auto">
+          <Button variant="light" onClick={() => navigate(`${PATHS.contact}?sujet=proprietaire`)} className="mx-auto">
             Demander mon estimation gratuite
           </Button>
         </div>

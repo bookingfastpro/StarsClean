@@ -19,7 +19,7 @@ export default function Sejours() {
             src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/calanques-de-bonifacio.jpg"
             className="w-full h-full object-cover" 
             alt=""
-            loading="lazy" decoding="async" referrerPolicy="no-referrer"
+            fetchPriority="high" referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950"></div>
         </div>
@@ -107,7 +107,7 @@ export default function Sejours() {
         <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 p-12 md:p-20 rounded-[3rem] shadow-2xl text-white">
           <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">Prêt pour un séjour inoubliable en Corse ?</h2>
           <p className="text-xl text-blue-100 mb-10">Contactez-nous dès aujourd'hui pour commencer à planifier vos vacances de rêve.</p>
-          <Button variant="secondary" onClick={() => navigate(PATHS.contact)} className="bg-white text-blue-600 hover:bg-blue-50 px-12 py-5 text-xl mx-auto">
+          <Button variant="light" onClick={() => navigate(PATHS.contact)} className="px-12 py-5 text-xl mx-auto">
             Demander mon devis sur mesure
           </Button>
         </div>

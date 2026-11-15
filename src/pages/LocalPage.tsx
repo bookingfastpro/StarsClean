@@ -97,7 +97,7 @@ export default function LocalPage({ page }: { page: LocalPageData }) {
         <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-10 tracking-tight text-center">Les prestations pour vos voyageurs à {page.city}</h2>
         <div className="flex flex-wrap justify-center gap-3">
           {SERVICES.map((s) => (
-            <Link key={s.id} to={servicePath(s)} className="px-5 py-3 bg-white border border-slate-200 rounded-full font-bold text-slate-700 hover:border-blue-400 hover:text-blue-600 transition-colors capitalize">
+            <Link key={s.id} to={servicePath(s)} className="px-5 py-3 bg-white border border-slate-200 rounded-full font-bold text-slate-700 hover:border-blue-400 hover:text-blue-600 transition-colors">
               {s.title}
             </Link>
           ))}
@@ -110,7 +110,7 @@ export default function LocalPage({ page }: { page: LocalPageData }) {
         <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 p-10 md:p-16 rounded-[3rem] shadow-2xl text-white text-center">
           <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">Confiez votre bien à notre conciergerie à {page.city}</h2>
           <p className="text-lg text-blue-100 mb-8">Étude gratuite et sans engagement de votre location saisonnière.</p>
-          <Link to={`${PATHS.contact}?sujet=proprietaire`} className={buttonClass('secondary', 'bg-white !text-blue-700 hover:bg-blue-50 mx-auto w-fit')}>
+          <Link to={`${PATHS.contact}?sujet=proprietaire`} className={buttonClass('light', 'mx-auto w-fit')}>
             Être rappelé
           </Link>
           {others.length > 0 && (

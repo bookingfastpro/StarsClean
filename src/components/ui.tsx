@@ -21,16 +21,18 @@ export const GlassContainer = ({
   </div>
 );
 
-type ButtonVariant = 'primary' | 'secondary' | 'gold' | 'danger' | 'outline';
+type ButtonVariant = 'primary' | 'secondary' | 'gold' | 'danger' | 'outline' | 'light' | 'outlineLight';
 
 const BASE_BTN =
-  'px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-base md:text-lg shadow-xl disabled:opacity-60 disabled:hover:scale-100';
+  'px-6 py-3 md:px-8 md:py-4 rounded-xl font-bold transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-base md:text-lg shadow-xl disabled:opacity-60 disabled:hover:translate-y-0';
 const BTN_VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/40',
   secondary: 'bg-white/20 backdrop-blur-md border border-white/40 text-white hover:bg-white/30',
   gold: 'bg-gradient-to-br from-[#A87952] via-[#825A3C] to-[#5E3F29] text-white border border-[#A87952]/40 shadow-stone-900/20 hover:shadow-[#825A3C]/40',
   danger: 'bg-red-500/90 text-white hover:bg-red-600',
   outline: 'bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-50 shadow-none',
+  light: 'bg-white text-blue-700 hover:bg-blue-50 shadow-slate-950/20',
+  outlineLight: 'bg-transparent border-2 border-white/40 text-white hover:bg-white hover:text-slate-900 shadow-none',
 };
 
 export const buttonClass = (variant: ButtonVariant = 'primary', className = '') => `${BASE_BTN} ${BTN_VARIANTS[variant]} ${className}`;
@@ -57,10 +59,10 @@ export const ElegantLogo = ({ isDark = false }) => (
       referrerPolicy="no-referrer"
     />
     <div className="flex flex-col leading-none">
-      <span className={`text-[10px] sm:text-sm md:text-base font-medium tracking-[0.2em] sm:tracking-[0.25em] uppercase ${!isDark ? 'text-slate-900' : 'text-white'}`}>
+      <span className={`text-xs sm:text-sm md:text-base font-semibold tracking-[0.18em] sm:tracking-[0.25em] uppercase ${!isDark ? 'text-slate-900' : 'text-white'}`}>
         Star's Clean
       </span>
-      <span className={`text-[8px] sm:text-[10px] md:text-[11px] font-light tracking-[0.3em] sm:tracking-[0.4em] uppercase mt-0.5 sm:mt-1 ${!isDark ? 'text-slate-500' : 'text-slate-300'}`}>
+      <span className={`text-[9px] sm:text-[10px] md:text-[11px] font-normal tracking-[0.3em] sm:tracking-[0.4em] uppercase mt-0.5 sm:mt-1 ${!isDark ? 'text-slate-500' : 'text-slate-300'}`}>
         Conciergerie
       </span>
     </div>

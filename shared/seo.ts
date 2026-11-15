@@ -316,7 +316,7 @@ export function getPageMeta(route: Route, properties: Property[], siteUrl: strin
           {
             '@context': 'https://schema.org',
             '@type': 'Service',
-            name: s.title.charAt(0).toUpperCase() + s.title.slice(1),
+            name: s.title,
             description: s.seoDescription,
             provider: { '@id': `${siteUrl}/#business` },
             areaServed: 'Corse-du-Sud',

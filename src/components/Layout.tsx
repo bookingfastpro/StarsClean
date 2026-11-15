@@ -1,102 +1,207 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, Menu, X, Instagram, Phone, Mail, MapPin, Users, BedDouble, Bath, Accessibility, Camera, ArrowRight } from 'lucide-react';
 import { Link, useRouter } from '../lib/router';
-import { ElegantLogo, GlassContainer, Img, getCategoryLabel, FALLBACK_IMAGE } from './ui';
+import { ElegantLogo, Img, getCategoryLabel, FALLBACK_IMAGE } from './ui';
+import { getServiceIcon } from './serviceIcon';
 import { SERVICES } from '../../shared/services';
 import { LOCAL_PAGES } from '../../shared/localPages';
 import { PATHS, servicePath, localPath } from '../../shared/seo';
 import { BUSINESS, telHref, mailHref } from '../../shared/site';
 import type { Property, Category } from '../types';
 
-const CATEGORY_LINKS: { cat: Category; label: string }[] = [
-  { cat: 'studios', label: 'Studios / T2' },
-  { cat: 'minivillas', label: 'Mini Villas' },
-  { cat: 'villas', label: 'Villas' },
-  { cat: 'appartements', label: 'Appartements' },
+const CATEGORY_LINKS: { cat: Category; label: string; desc: string }[] = [
+  { cat: 'villas', label: 'Villas', desc: 'Avec piscine, vue mer' },
+  { cat: 'minivillas', label: 'Mini villas', desc: 'Idéales pour 4 à 6 personnes' },
+  { cat: 'appartements', label: 'Appartements', desc: 'Au cœur des villes et ports' },
+  { cat: 'studios', label: 'Studios / T2', desc: 'Pour 2 à 3 voyageurs' },
 ];
+
+type NavItem = { label: string; to: string; active: boolean; menu?: 'biens' | 'prestations' };
+
+function DesktopDropdown({ kind }: { kind: 'biens' | 'prestations' }) {
+  return (
+    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible translate-y-1 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 transition-all duration-200">
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xl shadow-slate-900/10 p-2 w-72">
+        {kind === 'biens' ? (
+          <>
+            {CATEGORY_LINKS.map((c) => (
+              <Link key={c.cat} to={`${PATHS.properties}?type=${c.cat}`} className="flex flex-col px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+                <span className="text-sm font-semibold text-slate-900">{c.label}</span>
+                <span className="text-xs text-slate-500">{c.desc}</span>
+              </Link>
+            ))}
+            <div className="border-t border-slate-100 mt-2 pt-2">
+              <Link to={PATHS.properties} className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-blue-600 hover:bg-blue-50">
+                Voir toutes les locations <ArrowRight size={16} />
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            {SERVICES.map((s) => (
+              <Link key={s.id} to={servicePath(s)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group/item">
+                <span className="w-9 h-9 rounded-lg bg-slate-50 group-hover/item:bg-blue-50 flex items-center justify-center shrink-0 transition-colors">
+                  {getServiceIcon(s.icon, 18, 'text-blue-600')}
+                </span>
+                <span className="text-sm font-semibold text-slate-800">{s.title}</span>
+              </Link>
+            ))}
+            <div className="border-t border-slate-100 mt-2 pt-2">
+              <Link to={PATHS.prestations} className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold text-blue-600 hover:bg-blue-50">
+                Toutes les prestations <ArrowRight size={16} />
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function Navbar() {
   const { route } = useRouter();
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const isAdmin = typeof window !== 'undefined' && !!localStorage.getItem('adminToken');
 
-  useEffect(() => setOpen(false), [route]);
+  useEffect(() => {
+    setOpen(false);
+    setServicesOpen(false);
+  }, [route]);
 
-  const linkCls = (active: boolean) => `hover:text-blue-600 transition-colors ${active ? 'text-blue-600 font-bold' : ''}`;
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Menu mobile : blocage du défilement + fermeture avec Échap
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const items: NavItem[] = [
+    { label: 'Accueil', to: '/', active: route.name === 'home' },
+    { label: 'Propriétaires', to: PATHS.conciergerie, active: route.name === 'conciergerie' || route.name === 'local' },
+    { label: 'Nos biens', to: PATHS.properties, active: route.name === 'properties' || route.name === 'detail', menu: 'biens' },
+    { label: 'Séjours', to: PATHS.sejours, active: route.name === 'sejours' },
+    { label: 'Prestations', to: PATHS.prestations, active: route.name === 'prestations' || route.name === 'service-detail', menu: 'prestations' },
+  ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200 shadow-sm">
-      <nav className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex justify-between items-center" aria-label="Navigation principale">
-        <Link to="/" className="group" aria-label="Star's Clean Conciergerie – Accueil">
+    <>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${open ? 'bg-white border-b border-slate-100' : scrolled ? 'bg-white/95 backdrop-blur-lg shadow-[0_1px_0_rgba(15,23,42,0.06),0_8px_24px_-12px_rgba(15,23,42,0.15)]' : 'bg-white border-b border-slate-100'}`}>
+      <nav className="max-w-7xl mx-auto px-4 md:px-6 h-[72px] flex justify-between items-center gap-6" aria-label="Navigation principale">
+        <Link to="/" className="shrink-0" aria-label="Star's Clean Conciergerie – Accueil">
           <ElegantLogo />
         </Link>
-        <div className="hidden lg:flex items-center gap-6 font-medium text-slate-700 text-sm">
-          <Link to="/" className={linkCls(route.name === 'home')}>Accueil</Link>
-          <Link to={PATHS.conciergerie} className={linkCls(route.name === 'conciergerie')}>Propriétaires</Link>
-          <div className="relative group">
-            <Link to={PATHS.properties} className={`flex items-center gap-1 ${linkCls(route.name === 'properties' || route.name === 'detail')}`}>
-              Nos Biens <ChevronDown size={14} />
-            </Link>
-            <div className="absolute top-full left-0 pt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all">
-              <GlassContainer className="flex flex-col p-2 !bg-white shadow-xl border-slate-100">
-                {CATEGORY_LINKS.map((c) => (
-                  <Link key={c.cat} to={`${PATHS.properties}?type=${c.cat}`} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors">
-                    {c.label}
-                  </Link>
-                ))}
-              </GlassContainer>
-            </div>
-          </div>
-          <Link to={PATHS.sejours} className={linkCls(route.name === 'sejours')}>Gestion séjours</Link>
-          <div className="relative group">
-            <Link to={PATHS.prestations} className={`flex items-center gap-1 ${linkCls(route.name === 'prestations' || route.name === 'service-detail')}`}>
-              Prestations <ChevronDown size={14} />
-            </Link>
-            <div className="absolute top-full left-0 pt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all">
-              <GlassContainer className="flex flex-col p-2 !bg-white shadow-xl border-slate-100">
-                {SERVICES.map((s) => (
-                  <Link key={s.id} to={servicePath(s)} className="text-left px-4 py-2 hover:bg-slate-50 rounded-lg text-slate-800 transition-colors text-xs font-semibold capitalize">
-                    {s.title}
-                  </Link>
-                ))}
-              </GlassContainer>
-            </div>
-          </div>
-          <Link to={PATHS.contact} className={linkCls(route.name === 'contact')}>Contact</Link>
+
+        <ul className="hidden lg:flex items-center gap-0.5 xl:gap-1">
+          {items.map((it) => (
+            <li key={it.to} className={it.menu ? 'relative group' : 'relative'}>
+              <Link
+                to={it.to}
+                aria-current={it.active ? 'page' : undefined}
+                className={`relative flex items-center gap-1 px-2.5 xl:px-3.5 py-2 rounded-full text-[15px] font-medium whitespace-nowrap transition-colors ${it.active ? 'text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
+              >
+                {it.label}
+                {it.menu && <ChevronDown size={15} className="text-slate-400 transition-transform group-hover:rotate-180" />}
+                {it.active && <span className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-[3px] h-[2px] rounded-full bg-blue-600" />}
+              </Link>
+              {it.menu && <DesktopDropdown kind={it.menu} />}
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
           {isAdmin && (
-            <Link to={PATHS.admin} className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-100 transition-colors">
+            <Link to={PATHS.admin} className="px-3 py-2 rounded-full text-sm font-semibold text-slate-500 hover:text-blue-600 hover:bg-slate-50">
               Admin
             </Link>
           )}
+          <a href={telHref} className="flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold text-slate-700 hover:bg-slate-50" aria-label={`Appeler le ${BUSINESS.phoneDisplay}`}>
+            <Phone size={16} className="text-blue-600" />
+            <span className="hidden xl:inline tabular-nums">{BUSINESS.phoneDisplay}</span>
+          </a>
+          <Link
+            to={PATHS.contact}
+            aria-current={route.name === 'contact' ? 'page' : undefined}
+            className="px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap bg-slate-900 text-white hover:bg-blue-600 transition-colors"
+          >
+            Nous contacter
+          </Link>
         </div>
-        <button className="lg:hidden text-slate-800 p-2 -mr-2" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}>
-          {open ? <X /> : <Menu />}
-        </button>
+
+        <div className="flex lg:hidden items-center gap-1">
+          <a href={telHref} className="w-11 h-11 rounded-full flex items-center justify-center text-blue-600 hover:bg-slate-100" aria-label={`Appeler le ${BUSINESS.phoneDisplay}`}>
+            <Phone size={20} />
+          </a>
+          <button className="w-11 h-11 rounded-full flex items-center justify-center text-slate-800 hover:bg-slate-100 -mr-2" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-menu" aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}>
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </nav>
+    </header>
+
+      {/* En dehors du <header> : son backdrop-filter limiterait la taille d'un panneau « fixed ». */}
       {open && (
-        <div className="lg:hidden absolute top-[76px] left-4 right-4 animate-fade-in-down z-50 max-h-[calc(100svh-90px)] overflow-y-auto">
-          <GlassContainer className="flex flex-col p-4 gap-1 !bg-white/95 shadow-2xl">
-            <Link to="/" className="font-medium p-3 hover:bg-slate-100 rounded-lg">Accueil</Link>
-            <Link to={PATHS.conciergerie} className="font-medium p-3 hover:bg-slate-100 rounded-lg">Propriétaires</Link>
-            <Link to={PATHS.properties} className="font-medium p-3 hover:bg-slate-100 rounded-lg">Nos Biens</Link>
-            <Link to={PATHS.sejours} className="font-medium p-3 hover:bg-slate-100 rounded-lg">Gestion séjours</Link>
-            <Link to={PATHS.prestations} className="font-bold p-3 hover:bg-slate-100 rounded-lg text-blue-600">Prestations</Link>
-            <div className="grid grid-cols-1 gap-1 pl-4">
-              {SERVICES.map((s) => (
-                <Link key={s.id} to={servicePath(s)} className="text-sm p-2 hover:bg-slate-50 rounded-lg text-slate-600 capitalize">
-                  • {s.title}
-                </Link>
-              ))}
-            </div>
-            <Link to={PATHS.contact} className="font-medium p-3 hover:bg-slate-100 rounded-lg">Contact</Link>
-            <a href={telHref} className="mt-2 flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-600 text-white font-bold">
-              <Phone size={18} /> {BUSINESS.phoneDisplay}
+        <div id="mobile-menu" className="lg:hidden fixed inset-x-0 top-[72px] bottom-0 z-40 bg-white border-t border-slate-100 overflow-y-auto animate-menu-in">
+          <ul className="px-4 py-4 flex flex-col">
+            {items.map((it) => (
+              <li key={it.to} className="border-b border-slate-100">
+                {it.menu === 'prestations' ? (
+                  <>
+                    <button onClick={() => setServicesOpen(!servicesOpen)} aria-expanded={servicesOpen} className={`w-full flex items-center justify-between py-4 text-lg font-semibold ${it.active ? 'text-blue-600' : 'text-slate-900'}`}>
+                      {it.label}
+                      <ChevronDown size={20} className={`text-slate-400 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {servicesOpen && (
+                      <div className="pb-3 grid grid-cols-1 gap-1">
+                        {SERVICES.map((s) => (
+                          <Link key={s.id} to={servicePath(s)} className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-slate-50 text-slate-700 font-medium">
+                            <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">{getServiceIcon(s.icon, 18, 'text-blue-600')}</span>
+                            {s.title}
+                          </Link>
+                        ))}
+                        <Link to={PATHS.prestations} className="px-2 py-2.5 text-sm font-semibold text-blue-600">Toutes les prestations →</Link>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link to={it.to} className={`flex items-center justify-between py-4 text-lg font-semibold ${it.active ? 'text-blue-600' : 'text-slate-900'}`}>
+                    {it.label}
+                    <ArrowRight size={18} className="text-slate-300" />
+                  </Link>
+                )}
+              </li>
+            ))}
+            {isAdmin && (
+              <li className="border-b border-slate-100">
+                <Link to={PATHS.admin} className="flex py-4 text-lg font-semibold text-slate-500">Admin</Link>
+              </li>
+            )}
+          </ul>
+          <div className="px-4 pb-8 pt-2 grid grid-cols-1 gap-3">
+            <Link to={PATHS.contact} className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-slate-900 text-white font-semibold">
+              <Mail size={18} /> Nous contacter
+            </Link>
+            <a href={telHref} className="flex items-center justify-center gap-2 py-4 rounded-2xl border border-slate-200 text-slate-900 font-semibold">
+              <Phone size={18} className="text-blue-600" /> {BUSINESS.phoneDisplay}
             </a>
-            {isAdmin && <Link to={PATHS.admin} className="font-bold p-3 text-blue-600 hover:bg-blue-50 rounded-lg">Admin</Link>}
-          </GlassContainer>
+          </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
 
@@ -139,7 +244,7 @@ export function Footer() {
             <h2 className="font-black text-white mb-6 uppercase text-xs tracking-widest">Prestations</h2>
             <ul className="space-y-4 text-sm text-slate-400">
               {SERVICES.map((s) => (
-                <li key={s.id}><Link to={servicePath(s)} className="hover:text-blue-400 transition-colors capitalize">{s.title}</Link></li>
+                <li key={s.id}><Link to={servicePath(s)} className="hover:text-blue-400 transition-colors">{s.title}</Link></li>
               ))}
             </ul>
           </div>

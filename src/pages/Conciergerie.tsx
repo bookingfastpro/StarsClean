@@ -19,7 +19,7 @@ export default function Conciergerie() {
             src="https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images/properties/1776076788739-g4kq76f7xcq.jpg" 
             className="w-full h-full object-cover" 
             alt="Villa de luxe en Corse"
-            loading="lazy" decoding="async" referrerPolicy="no-referrer"
+            fetchPriority="high" referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950"></div>
         </div>
@@ -35,7 +35,7 @@ export default function Conciergerie() {
       </section>
 
       {/* Navigation Summary (Sommaire) */}
-      <div className="sticky top-[76px] z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 hidden md:block overflow-x-auto">
+      <div className="sticky top-[72px] z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 hidden md:block overflow-x-auto">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center gap-8 text-xs font-bold uppercase tracking-widest text-slate-500">
           {[
             ['À propos', 'a-propos'],
