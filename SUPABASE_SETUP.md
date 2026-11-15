@@ -94,3 +94,23 @@ using (true);
 
 ---
 **Félicitations !** Votre application est maintenant entièrement liée à Supabase. Toutes les modifications faites dans le panel admin seront sauvegardées dans votre base de données et les images seront stockées dans votre bucket.
+
+## 5. Sécurité (recommandé)
+
+Le panneau d'administration est désormais protégé côté serveur (connexion obligatoire pour ajouter,
+modifier ou supprimer un bien et pour envoyer des photos). Pour fermer aussi l'accès direct à Supabase :
+
+1. Dans **Project Settings → API**, copiez la clé **service_role** et ajoutez-la dans la variable
+   d'environnement `SUPABASE_SERVICE_ROLE_KEY` du serveur (ne la mettez jamais dans le code du site).
+2. Exécutez ensuite ce SQL pour supprimer les politiques trop permissives :
+
+```sql
+drop policy if exists "Accès complet pour admin" on properties;
+drop policy if exists "Lecture admin" on contact_requests;
+-- La lecture publique des biens visibles reste autorisée :
+drop policy if exists "Lecture publique pour tous" on properties;
+create policy "Lecture publique des biens visibles" on properties for select using ("isVisible" is not false);
+```
+
+3. Dans **Storage → Policies**, retirez les droits INSERT / UPDATE / DELETE publics du bucket
+   `property-images` (la lecture publique doit rester active pour afficher les photos).

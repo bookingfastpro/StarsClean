@@ -1,20 +1,36 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Star's Clean Conciergerie – site web
 
-# Run and deploy your AI Studio app
+Site de la conciergerie Star's Clean (Corse-du-Sud) : présentation, catalogue des biens, prestations
+et panneau de gestion des biens (`/admin`).
 
-This contains everything you need to run your app locally.
+## Lancer en local
 
-View your app in AI Studio: https://ai.studio/apps/c8460689-c6d7-4762-85c2-09f7a88e1796
+```bash
+npm install
+npm run dev        # http://localhost:3000
+```
 
-## Run Locally
+Production : `npm run build` puis `npm start` (ou `docker compose up`).
 
-**Prerequisites:**  Node.js
+## Variables d'environnement
 
+Voir `.env.example`. Les plus importantes :
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+| Variable | Rôle |
+| --- | --- |
+| `SITE_URL` | Adresse publique du site (canonical, sitemap, robots.txt) |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Connexion au panneau `/admin` |
+| `ADMIN_SESSION_SECRET` | Signature des sessions administrateur |
+| `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Base de données et photos (voir `SUPABASE_SETUP.md`) |
+
+## Organisation du code
+
+- `server.ts` – serveur Express : API, authentification, balises SEO injectées par page, `sitemap.xml`, `robots.txt`.
+- `shared/` – code commun serveur + navigateur : routes, méta-données SEO, données structurées, prestations, pages locales.
+- `src/pages/` – pages publiques ; `src/admin/` – panneau de gestion des biens (chargé uniquement sur `/admin`).
+
+## Référencement
+
+- Chaque page a sa propre URL, son titre, sa description, sa balise canonique et ses données structurées (JSON-LD).
+- Pages locales : `/conciergerie-bonifacio`, `/conciergerie-porto-vecchio` (contenu dans `shared/localPages.ts`).
+- Pour ajouter une ville : ajoutez une entrée dans `LOCAL_PAGES` avec un texte **unique**.

@@ -25,8 +25,9 @@ RUN npm install --omit=dev
 # Copy the built frontend from the builder stage
 COPY --from=builder /app/dist ./dist
 
-# Copy the server file and data
+# Copy the server file, shared SEO/routing code and data
 COPY --from=builder /app/server.ts ./
+COPY --from=builder /app/shared ./shared
 COPY --from=builder /app/properties.json ./
 
 # Expose the port used by the server
