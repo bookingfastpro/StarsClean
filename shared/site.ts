@@ -3,7 +3,7 @@
  * ⚠️ Gardez ces informations STRICTEMENT identiques à votre fiche Google Business Profile
  * (nom, téléphone, adresse) : la cohérence « NAP » est un facteur clé du référencement local.
  */
-export const DEFAULT_SITE_URL = 'https://www.conciergerie-corsedusud.fr';
+export const DEFAULT_SITE_URL = 'https://conciergerie-corse-du-sud.com';
 
 const STORAGE = 'https://qzvurftthvlazlizltgy.supabase.co/storage/v1/object/public/property-images';
 
